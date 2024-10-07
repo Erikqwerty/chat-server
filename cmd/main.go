@@ -19,17 +19,17 @@ type chat_server struct {
 }
 
 func (s *chat_server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	log.Printf("Usernames: %v", req.Usernames)
+	log.Printf("Cоздание нового чата: %v", req.Usernames)
 	return &desc.CreateResponse{Id: 1}, nil
 }
 
 func (s *chat_server) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
-	log.Printf("Delete user_id: %v", req.Id)
+	log.Printf("Удаление чата из системы по его идентификатору: %v", req.Id)
 	return nil, nil
 }
 
 func (s *chat_server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
-	log.Printf("User: %v; message: %v; time: %v", req.From, req.Text, req.Timestamp)
+	log.Printf("Отправка сообщения на сервер: User: %v; message: %v; time: %v", req.From, req.Text, req.Timestamp)
 	return nil, nil
 }
 
