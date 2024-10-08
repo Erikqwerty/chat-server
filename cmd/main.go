@@ -14,21 +14,25 @@ import (
 
 const grpcPort = 50051
 
-type chat_server struct {
+// ChatServer структура сервера
+type ChatServer struct {
 	desc.UnimplementedChatAPIV1Server
 }
 
-func (s *chat_server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
+// Create обрабатывает создание нового чата.
+func (s *ChatServer) Create(_ context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
 	log.Printf("Cоздание нового чата: %v", req.Usernames)
 	return &desc.CreateResponse{Id: 1}, nil
 }
 
-func (s *chat_server) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+// Delete обрабатывает удаление чата.
+func (s *ChatServer) Delete(_ context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
 	log.Printf("Удаление чата из системы по его идентификатору: %v", req.Id)
 	return nil, nil
 }
 
-func (s *chat_server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
+// SendMessage отправляет сообщение в чат.
+func (s *ChatServer) SendMessage(_ context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 	log.Printf("Отправка сообщения на сервер: User: %v; message: %v; time: %v", req.From, req.Text, req.Timestamp)
 	return nil, nil
 }
@@ -41,7 +45,7 @@ func main() {
 
 	s := grpc.NewServer()
 	reflection.Register(s)
-	desc.RegisterChatAPIV1Server(s, &chat_server{})
+	desc.RegisterChatAPIV1Server(s, &ChatServer{})
 
 	log.Printf("server listening at :%v", grpcPort)
 
