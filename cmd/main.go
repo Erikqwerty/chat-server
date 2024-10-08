@@ -14,7 +14,7 @@ import (
 
 const grpcPort = 50051
 
-// ChatServer структура сервера
+// ChatServer используется для реализации сервера gRPC, который предоставляет методы, описанные в ChatAPIV1
 type ChatServer struct {
 	desc.UnimplementedChatAPIV1Server
 }
