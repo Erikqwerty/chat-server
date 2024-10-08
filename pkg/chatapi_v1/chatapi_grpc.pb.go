@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v5.27.3
-// source: ChatAPI_v1.proto
+// source: chatapi.proto
 
-package UserAPI_v1
+package chatapi_v1
 
 import (
 	context "context"
@@ -38,7 +38,7 @@ func NewChatAPIV1Client(cc grpc.ClientConnInterface) ChatAPIV1Client {
 
 func (c *chatAPIV1Client) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
 	out := new(CreateResponse)
-	err := c.cc.Invoke(ctx, "/ChatAPI_v1.ChatAPI_v1/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (c *chatAPIV1Client) Create(ctx context.Context, in *CreateRequest, opts ..
 
 func (c *chatAPIV1Client) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/ChatAPI_v1.ChatAPI_v1/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *chatAPIV1Client) Delete(ctx context.Context, in *DeleteRequest, opts ..
 
 func (c *chatAPIV1Client) SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/ChatAPI_v1.ChatAPI_v1/SendMessage", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/SendMessage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func _ChatAPIV1_Create_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ChatAPI_v1.ChatAPI_v1/Create",
+		FullMethod: "/chatapi_v1.ChatAPIV1/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAPIV1Server).Create(ctx, req.(*CreateRequest))
@@ -127,7 +127,7 @@ func _ChatAPIV1_Delete_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ChatAPI_v1.ChatAPI_v1/Delete",
+		FullMethod: "/chatapi_v1.ChatAPIV1/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAPIV1Server).Delete(ctx, req.(*DeleteRequest))
@@ -145,7 +145,7 @@ func _ChatAPIV1_SendMessage_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ChatAPI_v1.ChatAPI_v1/SendMessage",
+		FullMethod: "/chatapi_v1.ChatAPIV1/SendMessage",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ChatAPIV1Server).SendMessage(ctx, req.(*SendMessageRequest))
@@ -157,7 +157,7 @@ func _ChatAPIV1_SendMessage_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ChatAPIV1_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "ChatAPI_v1.ChatAPI_v1",
+	ServiceName: "chatapi_v1.ChatAPIV1",
 	HandlerType: (*ChatAPIV1Server)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -174,5 +174,5 @@ var ChatAPIV1_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "ChatAPI_v1.proto",
+	Metadata: "chatapi.proto",
 }

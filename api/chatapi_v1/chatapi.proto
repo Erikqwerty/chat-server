@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package chatapi_v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/erikqwerty/auth/pkg/chatapi_v1;chatapi_v1";
+
+service ChatAPIV1 {
+  rpc Create(CreateRequest) returns (CreateResponse);
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty);
+  rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty);
+}
+
+//Create
+
+message CreateRequest {
+  repeated string usernames = 1;
+}
+
+message CreateResponse {
+  int64 id = 1;
+}
+
+//Delete
+
+message DeleteRequest {
+  int64 id = 1;
+}
+
+//SendMessage
+
+message SendMessageRequest {
+  string from = 1;
+  string text = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}

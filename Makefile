@@ -20,10 +20,10 @@ generate:
 	make generate-user-api
 
 generate-user-api:
-	mkdir -p pkg/ChatAPI_v1
-	protoc --proto_path api/ChatAPI_v1 \
-	--go_out=pkg/ChatAPI_v1 --go_opt=paths=source_relative \
+	mkdir -p pkg/chatapi_v1
+	protoc --proto_path api/chatapi_v1 \
+	--go_out=pkg/chatapi_v1 --go_opt=paths=source_relative \
 	--plugin=protoc-gen-go=bin/protoc-gen-go \
-	--go-grpc_out=pkg/ChatAPI_v1 --go-grpc_opt=paths=source_relative \
+	--go-grpc_out=pkg/chatapi_v1 --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
-	api/ChatAPI_v1/ChatAPI_v1.proto
+	api/chatapi_v1/chatapi.proto
