@@ -23,8 +23,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChatAPIV1Client interface {
+	// Метод для создания нового чата
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	// Метод для удаления чата
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Метод для присоединения к существующему чату
+	JoinChat(ctx context.Context, in *JoinChatRequest, opts ...grpc.CallOption) (*JoinChatResponse, error)
+	// Метод для отправки сообщения в чат
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -54,6 +59,15 @@ func (c *chatAPIV1Client) Delete(ctx context.Context, in *DeleteRequest, opts ..
 	return out, nil
 }
 
+func (c *chatAPIV1Client) JoinChat(ctx context.Context, in *JoinChatRequest, opts ...grpc.CallOption) (*JoinChatResponse, error) {
+	out := new(JoinChatResponse)
+	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/JoinChat", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *chatAPIV1Client) SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/SendMessage", in, out, opts...)
@@ -67,8 +81,13 @@ func (c *chatAPIV1Client) SendMessage(ctx context.Context, in *SendMessageReques
 // All implementations must embed UnimplementedChatAPIV1Server
 // for forward compatibility
 type ChatAPIV1Server interface {
+	// Метод для создания нового чата
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
+	// Метод для удаления чата
 	Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error)
+	// Метод для присоединения к существующему чату
+	JoinChat(context.Context, *JoinChatRequest) (*JoinChatResponse, error)
+	// Метод для отправки сообщения в чат
 	SendMessage(context.Context, *SendMessageRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedChatAPIV1Server()
 }
@@ -82,6 +101,9 @@ func (UnimplementedChatAPIV1Server) Create(context.Context, *CreateRequest) (*Cr
 }
 func (UnimplementedChatAPIV1Server) Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedChatAPIV1Server) JoinChat(context.Context, *JoinChatRequest) (*JoinChatResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method JoinChat not implemented")
 }
 func (UnimplementedChatAPIV1Server) SendMessage(context.Context, *SendMessageRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
@@ -135,6 +157,24 @@ func _ChatAPIV1_Delete_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ChatAPIV1_JoinChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(JoinChatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatAPIV1Server).JoinChat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatapi_v1.ChatAPIV1/JoinChat",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatAPIV1Server).JoinChat(ctx, req.(*JoinChatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ChatAPIV1_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendMessageRequest)
 	if err := dec(in); err != nil {
@@ -167,6 +207,10 @@ var ChatAPIV1_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _ChatAPIV1_Delete_Handler,
+		},
+		{
+			MethodName: "JoinChat",
+			Handler:    _ChatAPIV1_JoinChat_Handler,
 		},
 		{
 			MethodName: "SendMessage",
