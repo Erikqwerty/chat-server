@@ -15,8 +15,8 @@ service ChatAPIV1 {
 
 //Create
 message CreateRequest {
-  repeated int64 user_ids = 2;  
-  string chat_name = 3; 
+  repeated string emails = 1;  
+  string chat_name = 2; 
 }
 
 message CreateResponse {
