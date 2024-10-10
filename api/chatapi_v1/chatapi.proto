@@ -1,0 +1,71 @@
+syntax = "proto3";  
+
+package chatapi_v1;  
+
+import "google/protobuf/empty.proto";       
+import "google/protobuf/timestamp.proto";  
+
+option go_package = "github.com/erikqwerty/auth/pkg/chatapi_v1;chatapi_v1";  
+
+// Определение сервиса ChatAPIV1, который содержит основные 
+// RPC методы для работы с чатами
+service ChatAPIV1 {
+  // Метод для создания нового чата
+  rpc Create(CreateRequest) returns (CreateResponse);  
+  // Метод для удаления чата      
+  rpc Delete(DeleteRequest) returns (google.protobuf.Empty); 
+  // Метод для присоединения к существующему чату
+  rpc JoinChat(JoinChatRequest) returns (JoinChatResponse); 
+  // Метод для отправки сообщения в чат
+  rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty); 
+}
+
+// Определение сообщения запроса для метода Create (создание чата)
+message CreateRequest {
+  repeated string emails = 1;   // Список email-адресов участников чата
+  string chat_name = 2;         // Название чата
+}
+
+// Определение сообщения ответа для метода Create
+message CreateResponse {
+  int64 id = 1;  // Уникальный идентификатор созданного чата
+}
+
+// Определение сообщения запроса для метода Delete (удаление чата)
+message DeleteRequest {
+  int64 id = 1;  // Идентификатор чата, который необходимо удалить
+}
+
+// Определение сообщения запроса для метода SendMessage (отправка сообщения)
+message SendMessageRequest {
+  string from = 1;                      // Email отправителя сообщения
+  string text = 2;                      // Текст сообщения
+  // Временная метка отправки сообщения
+  google.protobuf.Timestamp timestamp = 3;  
+}
+
+// Определение сообщения запроса для метода JoinChat (присоединение к чату)
+message JoinChatRequest {
+  // Идентификатор чата, к которому хочет присоединиться пользователь
+  int64 chat_id = 1;
+  // Email пользователя, который хочет присоединиться       
+  string user_email = 2;   
+}
+
+// Определение сообщения ответа для метода JoinChat
+message JoinChatResponse {
+  int64 chat_id = 1;                       // Идентификатор чата
+  string chat_name = 2;                    // Название чата
+  
+  // Список участников чата после добавления нового пользователя
+  repeated string participants = 3;        
+  repeated Message messages = 4;           // История сообщений в чате
+}
+
+// Определение структуры сообщения для хранения информации о сообщении
+message Message {
+  string from = 1;                       // Email отправителя сообщения
+  string text = 2;                       // Текст сообщения
+  // Временная метка отправки сообщения
+  google.protobuf.Timestamp timestamp = 3; 
+}
