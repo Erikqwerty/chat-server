@@ -24,9 +24,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChatAPIV1Client interface {
 	// Метод для создания нового чата
-	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	CreateChat(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	// Метод для удаления чата
-	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteChat(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Метод для присоединения к существующему чату
 	JoinChat(ctx context.Context, in *JoinChatRequest, opts ...grpc.CallOption) (*JoinChatResponse, error)
 	// Метод для отправки сообщения в чат
@@ -41,18 +41,18 @@ func NewChatAPIV1Client(cc grpc.ClientConnInterface) ChatAPIV1Client {
 	return &chatAPIV1Client{cc}
 }
 
-func (c *chatAPIV1Client) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
+func (c *chatAPIV1Client) CreateChat(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
 	out := new(CreateResponse)
-	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/Create", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/CreateChat", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *chatAPIV1Client) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *chatAPIV1Client) DeleteChat(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chatapi_v1.ChatAPIV1/DeleteChat", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,9 +82,9 @@ func (c *chatAPIV1Client) SendMessage(ctx context.Context, in *SendMessageReques
 // for forward compatibility
 type ChatAPIV1Server interface {
 	// Метод для создания нового чата
-	Create(context.Context, *CreateRequest) (*CreateResponse, error)
+	CreateChat(context.Context, *CreateRequest) (*CreateResponse, error)
 	// Метод для удаления чата
-	Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error)
+	DeleteChat(context.Context, *DeleteRequest) (*emptypb.Empty, error)
 	// Метод для присоединения к существующему чату
 	JoinChat(context.Context, *JoinChatRequest) (*JoinChatResponse, error)
 	// Метод для отправки сообщения в чат
@@ -96,11 +96,11 @@ type ChatAPIV1Server interface {
 type UnimplementedChatAPIV1Server struct {
 }
 
-func (UnimplementedChatAPIV1Server) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (UnimplementedChatAPIV1Server) CreateChat(context.Context, *CreateRequest) (*CreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateChat not implemented")
 }
-func (UnimplementedChatAPIV1Server) Delete(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedChatAPIV1Server) DeleteChat(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteChat not implemented")
 }
 func (UnimplementedChatAPIV1Server) JoinChat(context.Context, *JoinChatRequest) (*JoinChatResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method JoinChat not implemented")
@@ -121,38 +121,38 @@ func RegisterChatAPIV1Server(s grpc.ServiceRegistrar, srv ChatAPIV1Server) {
 	s.RegisterService(&ChatAPIV1_ServiceDesc, srv)
 }
 
-func _ChatAPIV1_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ChatAPIV1_CreateChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatAPIV1Server).Create(ctx, in)
+		return srv.(ChatAPIV1Server).CreateChat(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/chatapi_v1.ChatAPIV1/Create",
+		FullMethod: "/chatapi_v1.ChatAPIV1/CreateChat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAPIV1Server).Create(ctx, req.(*CreateRequest))
+		return srv.(ChatAPIV1Server).CreateChat(ctx, req.(*CreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ChatAPIV1_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ChatAPIV1_DeleteChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatAPIV1Server).Delete(ctx, in)
+		return srv.(ChatAPIV1Server).DeleteChat(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/chatapi_v1.ChatAPIV1/Delete",
+		FullMethod: "/chatapi_v1.ChatAPIV1/DeleteChat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatAPIV1Server).Delete(ctx, req.(*DeleteRequest))
+		return srv.(ChatAPIV1Server).DeleteChat(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -201,12 +201,12 @@ var ChatAPIV1_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ChatAPIV1Server)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _ChatAPIV1_Create_Handler,
+			MethodName: "CreateChat",
+			Handler:    _ChatAPIV1_CreateChat_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _ChatAPIV1_Delete_Handler,
+			MethodName: "DeleteChat",
+			Handler:    _ChatAPIV1_DeleteChat_Handler,
 		},
 		{
 			MethodName: "JoinChat",
