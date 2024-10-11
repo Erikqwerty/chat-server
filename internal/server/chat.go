@@ -14,13 +14,13 @@ type ChatServer struct {
 	desc.UnimplementedChatAPIV1Server
 }
 
-// Create обрабатывает создание нового чата.
+// CreateChat обрабатывает создание нового чата.
 func (s *ChatServer) CreateChat(_ context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
 	log.Printf("Cоздание нового чата: %v", req.Emails)
 	return &desc.CreateResponse{Id: 1}, nil
 }
 
-// Delete обрабатывает удаление чата.
+// DeleteChat обрабатывает удаление чата.
 func (s *ChatServer) DeleteChat(_ context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
 	log.Printf("Удаление чата из системы по его идентификатору: %v", req.Id)
 	return nil, nil
