@@ -8,6 +8,7 @@ import (
 	"github.com/erikqwerty/chat-server/internal/db"
 )
 
+// ListChatMembers - достает из базы данных список участников чата
 func (pg *PG) ListChatMembers(ctx context.Context, chatID int) ([]*db.ChatMember, error) {
 	// Построение SQL-запроса для получения участников чата
 	query := pg.sb.
@@ -21,14 +22,12 @@ func (pg *PG) ListChatMembers(ctx context.Context, chatID int) ([]*db.ChatMember
 		return nil, errSQLCreateQwery(err)
 	}
 
-	// Выполнение запроса и получение строк
 	rows, err := pg.pool.Query(ctx, sql, args...)
 	if err != nil {
 		return nil, fmt.Errorf("ошибка выполнения запроса на получение участников чата: %w", err)
 	}
 	defer rows.Close()
 
-	// Инициализация слайса для хранения участников
 	var members []*db.ChatMember
 	for rows.Next() {
 		member := &db.ChatMember{}
@@ -39,7 +38,6 @@ func (pg *PG) ListChatMembers(ctx context.Context, chatID int) ([]*db.ChatMember
 		members = append(members, member)
 	}
 
-	// Проверка на ошибки после завершения итерации по строкам
 	if rows.Err() != nil {
 		return nil, fmt.Errorf("ошибка обработки строк результата: %w", rows.Err())
 	}
