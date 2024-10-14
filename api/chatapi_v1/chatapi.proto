@@ -42,6 +42,7 @@ message SendMessageRequest {
   string text = 2;                      // Текст сообщения
   // Временная метка отправки сообщения
   google.protobuf.Timestamp timestamp = 3;  
+  int64 chat_id = 4; // Id Чата в который отправляем сообщение
 }
 
 // Определение сообщения запроса для метода JoinChat (присоединение к чату)

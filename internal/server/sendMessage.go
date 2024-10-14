@@ -10,7 +10,13 @@ import (
 )
 
 // SendMessage отправляет сообщение в чат.
-func (s *ChatServer) SendMessage(_ context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
+func (s *ChatServer) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
+
+	_, err := s.DB.SendMessage(ctx, int(req.ChatId), req.From, req.Text)
+	if err != nil {
+		return nil, err
+	}
+
 	log.Printf("Отправка сообщения на сервер: User: %v; message: %v; time: %v", req.From, req.Text, req.Timestamp)
 	return nil, nil
 }

@@ -10,7 +10,12 @@ import (
 )
 
 // DeleteChat обрабатывает удаление чата.
-func (s *ChatServer) DeleteChat(_ context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+func (s *ChatServer) DeleteChat(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+	err := s.DB.DeleteChat(ctx, int(req.Id))
+	if err != nil {
+		return nil, err
+	}
+
 	log.Printf("Удаление чата из системы по его идентификатору: %v", req.Id)
 	return nil, nil
 }

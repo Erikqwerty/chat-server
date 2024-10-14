@@ -1,6 +1,9 @@
 package db
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 // Chat представляет чат с его атрибутами
 type Chat struct {
@@ -16,6 +19,7 @@ type ChatMember struct {
 	JoinedAt  time.Time // Время, когда пользователь присоединился к чату
 }
 
+// Message представляет сообщение в базе данных
 type Message struct {
 	ID        int       // Уникальный идентификатор сообщения
 	ChatID    int       // Идентификатор чата, в который отправлено сообщение (ссылка на таблицу Chat)
@@ -24,30 +28,32 @@ type Message struct {
 	Timestamp time.Time // Время отправки сообщения
 }
 
+// DB - определяет контракт для работы с базой данных
 type DB interface {
 	// CreateChat создает новый чат
-	CreateChat(chatName string) (int, error)
+	CreateChat(ctx context.Context, chatName string) (int, error)
 
 	// GetChat(id int) (*Chat, error)
+
 	// ListChats() ([]*Chat, error)
 
 	// DeleteChat удаляет чат по ID
-	DeleteChat(id int) error
+	DeleteChat(ctx context.Context, id int) error
 
 	// AddChatMember добавляет участника в чат
-	AddChatMember(chatID int, userEmail string) error
+	AddChatMember(ctx context.Context, chatID int, userEmail string) error
 
 	// ListChatMembers возвращает список участников чата
-	// ListChatMembers(chatID int) ([]*ChatMember, error)
+	ListChatMembers(сtx context.Context, chatID int) ([]*ChatMember, error)
 
 	// RemoveChatMember удаляет участника из чата
 	// RemoveChatMember(chatID int, userEmail string) error
 
 	// SendMessage отправляет сообщение в чат
-	SendMessage(chatID int, userEmail, text string) (int, error)
+	SendMessage(ctx context.Context, chatID int, userEmail, text string) (int, error)
 
 	// ListMessages возвращает все сообщения из чата
-	// ListMessages(chatID int) ([]*Message, error)
+	ListMessages(ctx context.Context, chatID int) ([]*Message, error)
 
 	// DeleteMessage удаляет сообщение по ID
 	// DeleteMessage(id int) error

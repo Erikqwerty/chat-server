@@ -1,6 +1,29 @@
 package pg
 
-func (pg *PG) CreateChat(chatName string) (int, error) {
+import (
+	"context"
+	"time"
+)
 
-	return 0, nil
+// CreateChat - Добавляет новый чат в базу данных
+func (pg *PG) CreateChat(ctx context.Context, chatName string) (int, error) {
+
+	query := pg.sb.
+		Insert("chats").
+		Columns("chat_name", "created_at").
+		Values(chatName, time.Now()).
+		Suffix("RETURNING id")
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return 0, errSQLCreateQwery(err)
+	}
+
+	var chatID int
+	err = pg.pool.QueryRow(ctx, sql, args...).Scan(&chatID)
+	if err != nil {
+		return 0, errSQLQwery(err)
+	}
+
+	return chatID, nil
 }

@@ -16,7 +16,7 @@ type ChatServer struct {
 	DB     db.DB
 }
 
-// NewAuthApp - Создает структуру приложения чата, загружая конфигурации
+// NewChatApp - Создает структуру приложения чата, загружая конфигурации
 func NewChatApp(path string) (*ChatServer, error) {
 	chat := &ChatServer{}
 	conf, err := config.New(path)

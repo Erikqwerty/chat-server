@@ -1,5 +1,31 @@
 package pg
 
-func (pg *PG) AddChatMember(chatID int, userEmail string) error {
+import (
+	"context"
+	"time"
+)
+
+// AddChatMember - Добавляет нового пользователя в таблицу chat_members в бд
+func (pg *PG) AddChatMember(ctx context.Context, chatID int, userEmail string) error {
+
+	if err := checkMemberInChat(ctx, pg, chatID, userEmail); err != nil {
+		return err
+	}
+
+	query := pg.sb.
+		Insert("chat_members").
+		Columns("chat_id", "user_email", "joined_at").
+		Values(chatID, userEmail, time.Now())
+
+	sql, arg, err := query.ToSql()
+	if err != nil {
+		return errSQLCreateQwery(err)
+	}
+
+	_, err = pg.pool.Exec(ctx, sql, arg...)
+	if err != nil {
+		return errSQLQwery(err)
+	}
+
 	return nil
 }
