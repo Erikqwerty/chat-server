@@ -115,19 +115,19 @@ jobs:
             docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }} $REGISTRY
             docker stop $CONTAINER_NAME || true
             docker rm $CONTAINER_NAME || true
-            docker run -d -p 50051:50051 --network auth-service-network --name $CONTAINER_NAME -t $REGISTRY/$IMAGE_NAME:$TAG_NAME
+            docker run -d -p 50051:50051 --network chat-service-network --name $CONTAINER_NAME -t $REGISTRY/$IMAGE_NAME:$TAG_NAME
 
             # Запуск или создание контейнера Postgres 
             if [ $(docker ps -q -f name=$DB_CONTAINER_NAME) ]; then
             echo "Контейнер базы данных уже запущен"
             else
             docker run -d --name $DB_CONTAINER_NAME \
-            --network auth-service-network \
+            --network chat-service-network \
             -e POSTGRES_DB=chat \
             -e POSTGRES_USER=${{ secrets.PG_USER }} \
             -e POSTGRES_PASSWORD=${{ secrets.PG_PASSWORD }} \
             -v postgres_data:/var/lib/postgresql/data \
-            -p 50062:5432 $DB_IMAGE_NAME
+            -p 50061:5433 $DB_IMAGE_NAME
             fi
 
             # Запускаем мигратор
