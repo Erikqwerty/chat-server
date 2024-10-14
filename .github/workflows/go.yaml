@@ -117,17 +117,18 @@ jobs:
             docker rm $CONTAINER_NAME || true
             docker run -d -p 50051:50051 --network chat-service-network --name $CONTAINER_NAME -t $REGISTRY/$IMAGE_NAME:$TAG_NAME
 
-            # Запуск или создание контейнера Postgres 
+            echo "Проверяем наличие контейнера базы данных..."
             if [ "$(docker ps -q -f name=$DB_CONTAINER_NAME)" ]; then
-            echo "Контейнер базы данных уже запущен"
+              echo "Контейнер базы данных уже запущен"
             else
-            docker run -d --name $DB_CONTAINER_NAME \
-            --network chat-service-network \
-            -e POSTGRES_DB=chat \
-            -e POSTGRES_USER=${{ secrets.PG_USER }} \
-            -e POSTGRES_PASSWORD=${{ secrets.PG_PASSWORD }} \
-            -v postgres_data:/var/lib/postgresql/chat_data \
-            -p 50061:5433 $DB_IMAGE_NAME
+              echo "Создаем контейнер базы данных..."
+              docker run -d --name $DB_CONTAINER_NAME \
+              --network chat-service-network \
+              -e POSTGRES_DB=chat \
+              -e POSTGRES_USER=${{ secrets.PG_USER }} \
+              -e POSTGRES_PASSWORD=${{ secrets.PG_PASSWORD }} \
+              -v postgres_data:/var/lib/postgresql/chat_data \
+              -p 50061:5433 $DB_IMAGE_NAME || echo "Ошибка при создании контейнера базы данных"
             fi
 
             # Запускаем мигратор
