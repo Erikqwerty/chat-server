@@ -11,4 +11,6 @@ FROM alpine:latest
 WORKDIR /root/
 COPY --from=builder /github.com/erikqwerty/chat-server/bin/chat-server .
 
+ADD .env .
+
 CMD ["./chat-server"]
