@@ -126,7 +126,7 @@ jobs:
             -e POSTGRES_DB=chat \
             -e POSTGRES_USER=${{ secrets.PG_USER }} \
             -e POSTGRES_PASSWORD=${{ secrets.PG_PASSWORD }} \
-            -v postgres_data:/var/lib/postgresql/data \
+            -v postgres_data:/var/lib/postgresql/data2 \
             -p 50061:5433 $DB_IMAGE_NAME
             fi
 
