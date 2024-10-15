@@ -12,7 +12,7 @@ import (
 func (s *ChatServer) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*desc.JoinChatResponse, error) {
 	log.Printf("Пользовтель %v хочет присоединится к чату ID %v ", req.UserEmail, req.ChatId)
 
-	err := s.DB.AddChatMember(ctx, int(req.ChatId), req.UserEmail)
+	err := s.DB.CreateChatMember(ctx, int(req.ChatId), req.UserEmail)
 	if err != nil {
 		return nil, err
 	}
@@ -27,14 +27,14 @@ func (s *ChatServer) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*
 
 	return &desc.JoinChatResponse{
 		ChatId:       req.ChatId,
-		ChatName:     "1",
+		ChatName:     "1", // TODO: Нужно передавать название чата еще
 		Participants: emails,
 		Messages:     messages,
 	}, nil
 }
 
 func emailMembers(ctx context.Context, s *ChatServer, chatID int) ([]string, error) {
-	members, err := s.DB.ListChatMembers(ctx, chatID)
+	members, err := s.DB.ReadChatMembers(ctx, chatID)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func emailMembers(ctx context.Context, s *ChatServer, chatID int) ([]string, err
 }
 
 func messagesMembers(ctx context.Context, s *ChatServer, chatID int) ([]*desc.Message, error) {
-	messagesDB, err := s.DB.ListMessages(ctx, chatID)
+	messagesDB, err := s.DB.ReadMessages(ctx, chatID)
 	if err != nil {
 		return nil, err
 	}

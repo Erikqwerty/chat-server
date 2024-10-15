@@ -18,3 +18,7 @@ func (s *ChatServer) CreateChat(ctx context.Context, req *desc.CreateRequest) (*
 	log.Printf("Cоздание нового чата: %v", req.Emails)
 	return &desc.CreateResponse{Id: int64(chatID)}, nil
 }
+
+//TODO: Нужно проверять email на валидность передаваемы а запросе
+
+//

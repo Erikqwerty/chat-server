@@ -19,3 +19,6 @@ func (s *ChatServer) DeleteChat(ctx context.Context, req *desc.DeleteRequest) (*
 	log.Printf("Удаление чата из системы по его идентификатору: %v", req.Id)
 	return nil, nil
 }
+
+// TODO: Нужна midleware, чтобы чат мог удалить только создатель чата
+// ?? возможно стоит пересмотреть структуру бд

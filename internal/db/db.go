@@ -28,33 +28,44 @@ type Message struct {
 	Timestamp time.Time // Время отправки сообщения
 }
 
-// DB - определяет контракт для работы с базой данных
+// DB - определяет контракт для работы с базой данных и определяет методы CRUD
 type DB interface {
+
+	//					Chats
+
 	// CreateChat создает новый чат
 	CreateChat(ctx context.Context, chatName string) (int, error)
 
-	// GetChat(id int) (*Chat, error)
+	// ReadChat - Возвращает чат по его ID
+	// ReadChat(ctx context.Context, id int) (*Chat, error)
 
-	// ListChats() ([]*Chat, error)
+	// ReadChats - Возвращает список чатов
+	ReadChats(сtx context.Context) ([]*Chat, error)
 
-	// DeleteChat удаляет чат по ID
+	// UpdateChat
+
+	// DeleteChat - удаляет чат по ID
 	DeleteChat(ctx context.Context, id int) error
 
-	// AddChatMember добавляет участника в чат
-	AddChatMember(ctx context.Context, chatID int, userEmail string) error
+	// 					Members
 
-	// ListChatMembers возвращает список участников чата
-	ListChatMembers(сtx context.Context, chatID int) ([]*ChatMember, error)
+	// CreateChatMember - добавляет участника в чат
+	CreateChatMember(ctx context.Context, chatID int, userEmail string) error
 
-	// RemoveChatMember удаляет участника из чата
-	// RemoveChatMember(chatID int, userEmail string) error
+	// ReadChatMembers - возвращает список участников чата
+	ReadChatMembers(сtx context.Context, chatID int) ([]*ChatMember, error)
 
-	// SendMessage отправляет сообщение в чат
-	SendMessage(ctx context.Context, chatID int, userEmail, text string) (int, error)
+	// DeleteChatMember - удаляет участника из чата
+	DeleteChatMember(сtx context.Context, chatID int, userEmail string) error
 
-	// ListMessages возвращает все сообщения из чата
-	ListMessages(ctx context.Context, chatID int) ([]*Message, error)
+	// 					Message
+
+	// CreateMessage - отправляет сообщение в чат
+	CreateMessage(ctx context.Context, chatID int, userEmail, text string) (int, error)
+
+	// ListMessages - возвращает все сообщения из чата
+	ReadMessages(ctx context.Context, chatID int) ([]*Message, error)
 
 	// DeleteMessage удаляет сообщение по ID
-	// DeleteMessage(id int) error
+	DeleteMessage(ctx context.Context, id int) error
 }

@@ -8,8 +8,8 @@ import (
 	"github.com/erikqwerty/chat-server/internal/db"
 )
 
-// ListMessages - достает из базы данных список сообщений в формате db.Message
-func (pg *PG) ListMessages(ctx context.Context, chatID int) ([]*db.Message, error) {
+// ReadMessages - достает из базы данных список сообщений в формате db.Message
+func (pg *PG) ReadMessages(ctx context.Context, chatID int) ([]*db.Message, error) {
 	query := pg.sb.
 		Select("id", "chat_id", "user_email", "text", "timestamp").
 		From("messages").

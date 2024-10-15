@@ -8,8 +8,8 @@ import (
 	"github.com/erikqwerty/chat-server/internal/db"
 )
 
-// ListChatMembers - достает из базы данных список участников чата
-func (pg *PG) ListChatMembers(ctx context.Context, chatID int) ([]*db.ChatMember, error) {
+// ReadChatMembers - достает из базы данных список участников чата
+func (pg *PG) ReadChatMembers(ctx context.Context, chatID int) ([]*db.ChatMember, error) {
 	// Построение SQL-запроса для получения участников чата
 	query := pg.sb.
 		Select("chat_id", "user_email", "joined_at").

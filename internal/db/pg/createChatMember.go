@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// AddChatMember - Добавляет нового пользователя в таблицу chat_members в бд
-func (pg *PG) AddChatMember(ctx context.Context, chatID int, userEmail string) error {
+// CreateChatMember - Добавляет нового пользователя в таблицу chat_members в бд
+func (pg *PG) CreateChatMember(ctx context.Context, chatID int, userEmail string) error {
 
 	if err := checkMemberInChat(ctx, pg, chatID, userEmail); err != nil {
 		return err

@@ -12,7 +12,7 @@ import (
 // SendMessage отправляет сообщение в чат.
 func (s *ChatServer) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 
-	_, err := s.DB.SendMessage(ctx, int(req.ChatId), req.From, req.Text)
+	_, err := s.DB.CreateMessage(ctx, int(req.ChatId), req.From, req.Text)
 	if err != nil {
 		return nil, err
 	}
@@ -20,3 +20,5 @@ func (s *ChatServer) SendMessage(ctx context.Context, req *desc.SendMessageReque
 	log.Printf("Отправка сообщения на сервер: User: %v; message: %v; time: %v", req.From, req.Text, req.Timestamp)
 	return nil, nil
 }
+
+// TODO: Надо проверять а существует ли чат в который меседж отправляем, и email отправителя находится ли в нужном чате

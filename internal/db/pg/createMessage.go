@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// SendMessage - отправляет новое сообщение в указанный чат и возвращает его ID.
-func (pg *PG) SendMessage(ctx context.Context, chatID int, userEmail, text string) (int, error) {
+// CreateMessage - отправляет новое сообщение в указанный чат и возвращает его ID.
+func (pg *PG) CreateMessage(ctx context.Context, chatID int, userEmail, text string) (int, error) {
 	query := pg.sb.
 		Insert("messages").
 		Columns("chat_id", "user_email", "text", "timestamp").
