@@ -31,13 +31,13 @@ type Message struct {
 // DB - определяет контракт для работы с базой данных и определяет методы CRUD
 type DB interface {
 
-	//					Chats
+	//					Chat
 
 	// CreateChat создает новый чат
 	CreateChat(ctx context.Context, chatName string) (int, error)
 
 	// ReadChat - Возвращает чат по его ID
-	// ReadChat(ctx context.Context, id int) (*Chat, error)
+	ReadChat(ctx context.Context, id int) (*Chat, error)
 
 	// ReadChats - Возвращает список чатов
 	ReadChats(сtx context.Context) ([]*Chat, error)
@@ -47,7 +47,7 @@ type DB interface {
 	// DeleteChat - удаляет чат по ID
 	DeleteChat(ctx context.Context, id int) error
 
-	// 					Members
+	// 					ChatMember
 
 	// CreateChatMember - добавляет участника в чат
 	CreateChatMember(ctx context.Context, chatID int, userEmail string) error

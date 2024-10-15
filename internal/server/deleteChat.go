@@ -20,5 +20,5 @@ func (s *ChatServer) DeleteChat(ctx context.Context, req *desc.DeleteRequest) (*
 	return nil, nil
 }
 
-// TODO: Нужна midleware, чтобы чат мог удалить только создатель чата
+// TODO: Нужна midleware, чтобы чат мог удалить только создатель чата или администратор
 // ?? возможно стоит пересмотреть структуру бд

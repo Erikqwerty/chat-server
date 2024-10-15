@@ -24,10 +24,14 @@ func (s *ChatServer) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*
 	if err != nil {
 		return nil, err
 	}
+	chat, err := s.DB.ReadChat(ctx, int(req.ChatId))
+	if err != nil {
+		return nil, err
+	}
 
 	return &desc.JoinChatResponse{
 		ChatId:       req.ChatId,
-		ChatName:     "1", // TODO: Нужно передавать название чата еще
+		ChatName:     chat.ChatName, // TODO: Нужно передавать название чата еще
 		Participants: emails,
 		Messages:     messages,
 	}, nil
