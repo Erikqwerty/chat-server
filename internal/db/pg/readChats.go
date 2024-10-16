@@ -7,7 +7,7 @@ import (
 	"github.com/erikqwerty/chat-server/internal/db"
 )
 
-// ReadChats - возвращает список чатов хранящихся в БД
+// ReadChats - достает список чатов ([]*db.Chat) хранящихся в БД
 func (pg *PG) ReadChats(ctx context.Context) ([]*db.Chat, error) {
 	chats := []*db.Chat{}
 	query := pg.sb.Select("id", "chat_name", "created_at").From("chats")

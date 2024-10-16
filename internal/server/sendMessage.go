@@ -10,7 +10,7 @@ import (
 	desc "github.com/erikqwerty/chat-server/pkg/chatapi_v1"
 )
 
-// SendMessage отправляет сообщение в чат.
+// SendMessage - обрабатывает получаемые сообщения.
 func (s *ChatServer) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 	err := s.existsEmailInChat(ctx, req.From, req.ChatId)
 	if err != nil {

@@ -7,7 +7,7 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-// checkMemberInChat - проверяет, состоит ли пользователь в чате в базе данных
+// checkMemberInChat - проверяет, состоит ли пользователь (userEmail) в чате (chatID) в базе данных
 func checkMemberInChat(ctx context.Context, pg *PG, chatID int, userEmail string) error {
 	checkQuery := pg.sb.
 		Select("1").

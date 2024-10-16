@@ -8,7 +8,7 @@ import (
 	"github.com/erikqwerty/chat-server/internal/db"
 )
 
-// ReadMessages - достает из базы данных список сообщений в формате db.Message
+// ReadMessages - достает из указанного чата (chatID) список сообщений в формате ([]*db.Message)
 func (pg *PG) ReadMessages(ctx context.Context, chatID int) ([]*db.Message, error) {
 	query := pg.sb.
 		Select("id", "chat_id", "user_email", "text", "timestamp").
@@ -21,14 +21,12 @@ func (pg *PG) ReadMessages(ctx context.Context, chatID int) ([]*db.Message, erro
 		return nil, errSQLCreateQwery(err)
 	}
 
-	// Выполнение запроса и получение строк
 	rows, err := pg.pool.Query(ctx, sql, args...)
 	if err != nil {
 		return nil, errSQLQwery(err)
 	}
 	defer rows.Close()
 
-	// Сканирование результатов запроса в слайс сообщений
 	var messages []*db.Message
 	for rows.Next() {
 		msg := &db.Message{}

@@ -8,9 +8,8 @@ import (
 	"github.com/erikqwerty/chat-server/internal/db"
 )
 
-// ReadChatMember - достает из базы данных участника чата при наличии
+// ReadChatMember - достает из базы данных участника (UserEmail) чата (chatID) при наличии
 func (pg *PG) ReadChatMember(ctx context.Context, UserEmail string, chatID int) (*db.ChatMember, error) {
-	// Построение SQL-запроса для получения конкретного участника чата
 	query := pg.sb.
 		Select("chat_id", "user_email", "joined_at").
 		From("chat_members").

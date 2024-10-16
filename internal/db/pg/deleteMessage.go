@@ -6,7 +6,7 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-// DeleteMessage - удаляет сообщение из базы данных по его id
+// DeleteMessage - удаляет сообщение из базы данных по его (id)
 func (pg *PG) DeleteMessage(ctx context.Context, id int) error {
 	query := pg.sb.Delete("messages").Where(squirrel.Eq{"id": id})
 

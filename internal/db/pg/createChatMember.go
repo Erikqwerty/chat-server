@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// CreateChatMember - Добавляет нового пользователя в таблицу chat_members в бд
+// CreateChatMember - сохраняет нового пользователя (userEmail) в таблице chat_members
+// с указание чата в котором тот находится (chatID)
 func (pg *PG) CreateChatMember(ctx context.Context, chatID int, userEmail string) error {
 
 	if err := checkMemberInChat(ctx, pg, chatID, userEmail); err != nil {

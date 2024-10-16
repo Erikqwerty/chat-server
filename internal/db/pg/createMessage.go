@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// CreateMessage - отправляет новое сообщение в указанный чат и возвращает его ID.
+// CreateMessage - сохраняет новое сообщение (text) с указанием чата (chatID) и отправителя (userEmail)
+// в базе данных и возвращает ID записи.
 func (pg *PG) CreateMessage(ctx context.Context, chatID int, userEmail, text string) (int, error) {
 	query := pg.sb.
 		Insert("messages").

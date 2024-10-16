@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// CreateChat - Добавляет новый чат в базу данных
+// CreateChat - сохраняет запись о новом чате (chatName) в базе данных и возвращает его id
 func (pg *PG) CreateChat(ctx context.Context, chatName string) (int, error) {
 
 	query := pg.sb.
