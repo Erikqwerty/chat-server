@@ -34,14 +34,13 @@ func (s *ChatServer) existsEmailInChat(ctx context.Context, fromEmail string, ch
 	if err != nil {
 		return fmt.Errorf("чат с указанным id не существует: %w", err)
 	}
+
 	if chat.ID > 0 {
-		member, err := s.DB.ReadChatMember(ctx, fromEmail, chat.ID)
-		if err != nil {
-			return err
-		}
+		member, errv := s.DB.ReadChatMember(ctx, fromEmail, chat.ID)
 		if member != nil {
 			return nil // пользователь состоит в чате
 		}
+		err = errv
 	}
-	return fmt.Errorf("пользователь %v не состоит в чате %v", fromEmail, chatID)
+	return fmt.Errorf("пользователь email: %v не состоит в чате %v; err: %w", fromEmail, chatID, err)
 }

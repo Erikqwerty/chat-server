@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -35,11 +36,12 @@ func validateEmails(emails []string) ([]string, error) {
 		if isValidEmail(email) {
 			validEmail = append(validEmail, email)
 		} else {
-			err += fmt.Sprintf("не валидный email: %v : ", email)
+			err += fmt.Sprintf("ошибка не валидный email: %v;", email)
 		}
 	}
+
 	if err != "" {
-		return validEmail, fmt.Errorf("%v", err)
+		return validEmail, errors.New(err)
 	}
 	return validEmail, nil
 }
