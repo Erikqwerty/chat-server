@@ -52,6 +52,9 @@ type DB interface {
 	// CreateChatMember - добавляет участника в чат
 	CreateChatMember(ctx context.Context, chatID int, userEmail string) error
 
+	// ReadChatMember - возвращает  участника чата если он есть
+	ReadChatMember(сtx context.Context, userEmail string, chatID int) (*ChatMember, error)
+
 	// ReadChatMembers - возвращает список участников чата
 	ReadChatMembers(сtx context.Context, chatID int) ([]*ChatMember, error)
 

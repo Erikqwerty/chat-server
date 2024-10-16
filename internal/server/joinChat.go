@@ -16,11 +16,11 @@ func (s *ChatServer) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	emails, err := emailMembers(ctx, s, int(req.ChatId))
+	emails, err := s.emailMembers(ctx, int(req.ChatId))
 	if err != nil {
 		return nil, err
 	}
-	messages, err := messagesMembers(ctx, s, int(req.ChatId))
+	messages, err := s.messagesMembers(ctx, int(req.ChatId))
 	if err != nil {
 		return nil, err
 	}
@@ -31,13 +31,13 @@ func (s *ChatServer) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*
 
 	return &desc.JoinChatResponse{
 		ChatId:       req.ChatId,
-		ChatName:     chat.ChatName, // TODO: Нужно передавать название чата еще
+		ChatName:     chat.ChatName,
 		Participants: emails,
 		Messages:     messages,
 	}, nil
 }
 
-func emailMembers(ctx context.Context, s *ChatServer, chatID int) ([]string, error) {
+func (s *ChatServer) emailMembers(ctx context.Context, chatID int) ([]string, error) {
 	members, err := s.DB.ReadChatMembers(ctx, chatID)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func emailMembers(ctx context.Context, s *ChatServer, chatID int) ([]string, err
 	return emails, nil
 }
 
-func messagesMembers(ctx context.Context, s *ChatServer, chatID int) ([]*desc.Message, error) {
+func (s *ChatServer) messagesMembers(ctx context.Context, chatID int) ([]*desc.Message, error) {
 	messagesDB, err := s.DB.ReadMessages(ctx, chatID)
 	if err != nil {
 		return nil, err
