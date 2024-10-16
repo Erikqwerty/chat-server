@@ -7,6 +7,7 @@ import (
 	"github.com/erikqwerty/chat-server/internal/db"
 )
 
+// ReadChat - возвращает чат по его id из базы данных
 func (pg *PG) ReadChat(ctx context.Context, id int) (*db.Chat, error) {
 	query := pg.sb.Select("id", "chat_name", "created_at").From("chats").Where(squirrel.Eq{"id": id})
 
