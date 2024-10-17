@@ -1,39 +1,35 @@
 package server
 
 import (
-	"context"
-	"log"
+	"fmt"
 
-	"google.golang.org/protobuf/types/known/emptypb"
-
+	"github.com/erikqwerty/chat-server/internal/config"
+	"github.com/erikqwerty/chat-server/internal/db"
+	"github.com/erikqwerty/chat-server/internal/db/pg"
 	desc "github.com/erikqwerty/chat-server/pkg/chatapi_v1"
 )
 
 // ChatServer реализует методы ChatAPIV1.
 type ChatServer struct {
 	desc.UnimplementedChatAPIV1Server
+	Config *config.Config
+	DB     db.DB
 }
 
-// Create обрабатывает создание нового чата.
-func (s *ChatServer) Create(_ context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	log.Printf("Cоздание нового чата: %v", req.Emails)
-	return &desc.CreateResponse{Id: 1}, nil
-}
+// NewChatApp - Создает структуру приложения чата, загружая конфигурации
+func NewChatApp(path string) (*ChatServer, error) {
+	chat := &ChatServer{}
+	conf, err := config.New(path)
+	if err != nil {
+		return nil, fmt.Errorf("ошибка чтения конфигурации %v", err)
+	}
+	chat.Config = conf
 
-// Delete обрабатывает удаление чата.
-func (s *ChatServer) Delete(_ context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
-	log.Printf("Удаление чата из системы по его идентификатору: %v", req.Id)
-	return nil, nil
-}
+	database, err := pg.New(conf.DB.DSN())
+	if err != nil {
+		return nil, fmt.Errorf("ошибка чтения dsn для подключения к базе данных %v", err)
+	}
+	chat.DB = database
 
-// SendMessage отправляет сообщение в чат.
-func (s *ChatServer) SendMessage(_ context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
-	log.Printf("Отправка сообщения на сервер: User: %v; message: %v; time: %v", req.From, req.Text, req.Timestamp)
-	return nil, nil
-}
-
-// JoinChat Подключение к чату.
-func (s *ChatServer) JoinChat(_ context.Context, req *desc.JoinChatRequest) (*desc.JoinChatResponse, error) {
-	log.Printf("Пользовтель %v хочет присоединится к чату ID %v ", req.UserEmail, req.ChatId)
-	return nil, nil
+	return chat, nil
 }

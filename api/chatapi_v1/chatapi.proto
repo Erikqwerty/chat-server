@@ -11,9 +11,9 @@ option go_package = "github.com/erikqwerty/auth/pkg/chatapi_v1;chatapi_v1";
 // RPC методы для работы с чатами
 service ChatAPIV1 {
   // Метод для создания нового чата
-  rpc Create(CreateRequest) returns (CreateResponse);  
+  rpc CreateChat(CreateRequest) returns (CreateResponse);  
   // Метод для удаления чата      
-  rpc Delete(DeleteRequest) returns (google.protobuf.Empty); 
+  rpc DeleteChat(DeleteRequest) returns (google.protobuf.Empty); 
   // Метод для присоединения к существующему чату
   rpc JoinChat(JoinChatRequest) returns (JoinChatResponse); 
   // Метод для отправки сообщения в чат
@@ -42,6 +42,7 @@ message SendMessageRequest {
   string text = 2;                      // Текст сообщения
   // Временная метка отправки сообщения
   google.protobuf.Timestamp timestamp = 3;  
+  int64 chat_id = 4; // Id Чата в который отправляем сообщение
 }
 
 // Определение сообщения запроса для метода JoinChat (присоединение к чату)

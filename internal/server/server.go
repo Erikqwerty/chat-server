@@ -13,21 +13,21 @@ import (
 
 // Server представляет gRPC сервер для ChatAPI.
 type Server struct {
-	grpcPort int
-	chat     *ChatServer
+	Adress string
+	chat   *ChatServer
 }
 
 // NewServer создает новый экземпляр Server.
-func NewServer(grpcPort int, chat *ChatServer) *Server {
+func NewServer(chat *ChatServer) *Server {
 	return &Server{
-		grpcPort: grpcPort,
-		chat:     chat,
+		Adress: chat.Config.GRPC.Address(),
+		chat:   chat,
 	}
 }
 
 // Start запускает gRPC сервер.
 func (s *Server) Start() error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", s.grpcPort))
+	lis, err := net.Listen("tcp", s.Adress)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
@@ -36,7 +36,7 @@ func (s *Server) Start() error {
 	reflection.Register(grpcServer)
 	desc.RegisterChatAPIV1Server(grpcServer, s.chat)
 
-	log.Printf("server listening at :%v", s.grpcPort)
+	log.Printf("server listening at :%v", s.Adress)
 
 	return grpcServer.Serve(lis)
 }
