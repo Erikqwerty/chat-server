@@ -3,8 +3,9 @@ package pg
 import (
 	"context"
 
-	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/jackc/pgx/v4/pgxpool"
+
+	"github.com/erikqwerty/chat-server/internal/client/db"
 )
 
 // pgClient представляет клиента базы данных, который использует masterDBS для работы с базой данных.
@@ -18,6 +19,7 @@ func New(ctx context.Context, dsn string) (db.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &pgClient{
 		masterDBS: &pg{dbc: dbc},
 	}, nil
@@ -33,5 +35,6 @@ func (c *pgClient) Close() error {
 	if c.masterDBS != nil {
 		c.masterDBS.Close()
 	}
+
 	return nil
 }

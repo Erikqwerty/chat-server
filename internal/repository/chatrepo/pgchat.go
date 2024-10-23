@@ -1,4 +1,4 @@
-package chatserverrepository
+package chatrepo
 
 import (
 	"context"
@@ -9,8 +9,9 @@ import (
 	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
-	"github.com/erikqwerty/chat-server/internal/repository/chat/convertor"
-	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat/model"
+
+	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/convertor"
+	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/modelrepo"
 )
 
 var _ repository.Chat = (*repoChat)(nil)
@@ -29,12 +30,12 @@ type repoChat struct {
 
 // CreateChat - сохраняет запись о новом чате  в базе данных
 func (repo *repoChat) CreateChat(ctx context.Context, chat string) (int, error) {
-
 	query := sq.
 		Insert(tableChat).
 		Columns(chatName, chatCreatedAt).
 		Values(chat, time.Now()).
-		Suffix("RETURNING id").PlaceholderFormat(sq.Dollar)
+		Suffix("RETURNING id").
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -47,6 +48,7 @@ func (repo *repoChat) CreateChat(ctx context.Context, chat string) (int, error) 
 	}
 
 	var chatID int
+
 	err = repo.db.DB().ScanOneContext(ctx, &chatID, q, args...)
 	if err != nil {
 		return 0, err
@@ -57,8 +59,11 @@ func (repo *repoChat) CreateChat(ctx context.Context, chat string) (int, error) 
 
 // ReadChat - возвращает информацию о чате из базы данных
 func (repo *repoChat) ReadChat(ctx context.Context, id int) (*model.Chat, error) {
-	query := sq.Select(chatID, chatName, chatCreatedAt).
-		From(tableChat).Where(sq.Eq{"id": id}).PlaceholderFormat(sq.Dollar)
+	query := sq.
+		Select(chatID, chatName, chatCreatedAt).
+		From(tableChat).
+		Where(sq.Eq{"id": id}).
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -71,6 +76,7 @@ func (repo *repoChat) ReadChat(ctx context.Context, id int) (*model.Chat, error)
 	}
 
 	chat := &modelrepo.Chat{}
+
 	err = repo.db.DB().ScanOneContext(ctx, chat, q, args...)
 	if err != nil {
 		return nil, err
@@ -82,7 +88,11 @@ func (repo *repoChat) ReadChat(ctx context.Context, id int) (*model.Chat, error)
 // ReadChats - достает список чатов хранящихся в БД
 func (repo *repoChat) ReadChats(ctx context.Context) ([]*model.Chat, error) {
 	chats := []*modelrepo.Chat{}
-	query := sq.Select(chatID, chatName, chatCreatedAt).From(tableChat).PlaceholderFormat(sq.Dollar)
+
+	query := sq.
+		Select(chatID, chatName, chatCreatedAt).
+		From(tableChat).
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -106,7 +116,8 @@ func (repo *repoChat) ReadChats(ctx context.Context) ([]*model.Chat, error) {
 func (repo *repoChat) DeleteChat(ctx context.Context, id int) error {
 	query := sq.
 		Delete(tableChat).
-		Where(sq.Eq{"id": id}).PlaceholderFormat(sq.Dollar)
+		Where(sq.Eq{"id": id}).
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -122,5 +133,6 @@ func (repo *repoChat) DeleteChat(ctx context.Context, id int) error {
 	if execErr != nil {
 		return err
 	}
+
 	return nil
 }

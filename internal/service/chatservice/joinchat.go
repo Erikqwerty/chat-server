@@ -18,14 +18,17 @@ func (s *service) JoinChat(ctx context.Context, chatMember *model.ChatMember) (*
 		if err != nil {
 			return err
 		}
+
 		chat, err = s.chatRepository.ReadChat(ctx, chatMember.ChatID)
 		if err != nil {
 			return err
 		}
+
 		members, err = s.chatRepository.ReadChatMembers(ctx, chatMember.ChatID)
 		if err != nil {
 			return err
 		}
+
 		messages, err = s.chatRepository.ReadMessages(ctx, chatMember.ChatID)
 		if err != nil {
 			return err

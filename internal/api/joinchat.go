@@ -9,7 +9,7 @@ import (
 )
 
 // JoinChat - Обрабатывает запрос на подключение к чату
-func (i *Implementation) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*desc.JoinChatResponse, error) {
+func (i *ImplChatServer) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*desc.JoinChatResponse, error) {
 	if !isValidEmail(req.UserEmail) {
 		return nil, errors.New("email не валиден")
 	}
@@ -18,5 +18,6 @@ func (i *Implementation) JoinChat(ctx context.Context, req *desc.JoinChatRequest
 	if err != nil {
 		return nil, err
 	}
+
 	return convertor.ToChatAPIJoinRespFromModelJoinChat(joinChat), nil
 }

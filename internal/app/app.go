@@ -5,12 +5,13 @@ import (
 	"log"
 	"net"
 
-	"github.com/erikqwerty/chat-server/internal/closer"
-	"github.com/erikqwerty/chat-server/internal/config"
-	desc "github.com/erikqwerty/chat-server/pkg/chatapi_v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/erikqwerty/chat-server/internal/closer"
+	"github.com/erikqwerty/chat-server/internal/config"
+	desc "github.com/erikqwerty/chat-server/pkg/chatapi_v1"
 )
 
 // App - структура приложения
@@ -22,10 +23,12 @@ type App struct {
 // NewApp - инициализирует App
 func NewApp(ctx context.Context) (*App, error) {
 	a := &App{}
+
 	err := a.initDeps(ctx)
 	if err != nil {
 		return nil, err
 	}
+
 	return a, nil
 }
 
@@ -45,12 +48,14 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initServiceProvider,
 		a.initGRPCServer,
 	}
+
 	for _, f := range inits {
 		err := f(ctx)
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -59,10 +64,12 @@ func (a *App) initConfig(_ context.Context) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 func (a *App) initServiceProvider(_ context.Context) error {
 	a.serviceProvider = newServiceProvider()
+
 	return nil
 }
 

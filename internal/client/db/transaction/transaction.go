@@ -3,10 +3,11 @@ package transaction
 import (
 	"context"
 
-	"github.com/erikqwerty/chat-server/internal/client/db"
-	"github.com/erikqwerty/chat-server/internal/client/db/pg"
 	"github.com/jackc/pgx/v4"
 	"github.com/pkg/errors"
+
+	"github.com/erikqwerty/chat-server/internal/client/db"
+	"github.com/erikqwerty/chat-server/internal/client/db/pg"
 )
 
 type manager struct {

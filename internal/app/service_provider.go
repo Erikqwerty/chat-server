@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 
+	"github.com/jackc/pgx/v4/pgxpool"
+
 	"github.com/erikqwerty/chat-server/internal/api"
 	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/client/db/pg"
@@ -11,10 +13,9 @@ import (
 	"github.com/erikqwerty/chat-server/internal/closer"
 	"github.com/erikqwerty/chat-server/internal/config"
 	"github.com/erikqwerty/chat-server/internal/repository"
-	chatserverrepository "github.com/erikqwerty/chat-server/internal/repository/chat"
+	"github.com/erikqwerty/chat-server/internal/repository/chatrepo"
 	"github.com/erikqwerty/chat-server/internal/service"
-	chatservice "github.com/erikqwerty/chat-server/internal/service/chat"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/erikqwerty/chat-server/internal/service/chatservice"
 )
 
 type serviceProvider struct {
@@ -29,7 +30,7 @@ type serviceProvider struct {
 
 	chatService service.ChatService
 
-	chatServerImpl *api.Implementation
+	chatServerImpl *api.ImplChatServer
 }
 
 func newServiceProvider() *serviceProvider {
@@ -42,8 +43,10 @@ func (s *serviceProvider) PGConfig() config.PGConfig {
 		if err != nil {
 			log.Fatalf("ошибка загрузки конфигурации базы данных: %s", err.Error())
 		}
+
 		s.pgConfig = cfg
 	}
+
 	return s.pgConfig
 }
 
@@ -53,8 +56,10 @@ func (s *serviceProvider) GRPCConfig() config.GRPCConfig {
 		if err != nil {
 			log.Fatalf("ошибка загрузки конфигурации базы данных: %s", err.Error())
 		}
+
 		s.grpcConfig = cfg
 	}
+
 	return s.grpcConfig
 }
 
@@ -62,36 +67,42 @@ func (s serviceProvider) PgPool(ctx context.Context) *pgxpool.Pool {
 	if s.pgConfig == nil {
 		s.PGConfig()
 	}
+
 	if s.pgPool == nil {
 		pool, err := pgxpool.Connect(ctx, s.pgConfig.DSN())
 		if err != nil {
 			log.Fatalf("ошибка подключения к базе данных: %v", err)
 		}
+
 		err = pool.Ping(ctx)
 		if err != nil {
 			log.Fatalf("ping до базы данных не проходит: %v", err)
 		}
+
 		closer.Add(func() error {
 			pool.Close()
 			return nil
 		})
+
 		s.pgPool = pool
 	}
+
 	return s.pgPool
 }
 
 func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
-
 	if s.dbClient == nil {
 		cl, err := pg.New(ctx, s.PGConfig().DSN())
 		if err != nil {
 			log.Fatalf("ошибка подключения к базе данных: %v", err)
 		}
+
 		err = cl.DB().Ping(ctx)
 		if err != nil {
 			log.Fatalf("ping до базы данных не проходит: %v", err)
 		}
 		closer.Add(cl.Close)
+
 		s.dbClient = cl
 	}
 	return s.dbClient
@@ -107,8 +118,9 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 
 func (s *serviceProvider) ChatServerRepository(ctx context.Context) repository.ChatServerRepository {
 	if s.chatServerRepository == nil {
-		s.chatServerRepository = chatserverrepository.NewRepo(s.DBClient(ctx))
+		s.chatServerRepository = chatrepo.NewRepo(s.DBClient(ctx))
 	}
+
 	return s.chatServerRepository
 }
 
@@ -116,12 +128,14 @@ func (s *serviceProvider) ChatService(ctx context.Context) service.ChatService {
 	if s.chatService == nil {
 		s.chatService = chatservice.NewService(s.ChatServerRepository(ctx), s.TxManager(ctx))
 	}
+
 	return s.chatService
 }
 
-func (s *serviceProvider) ChatServerImpl(ctx context.Context) *api.Implementation {
+func (s *serviceProvider) ChatServerImpl(ctx context.Context) *api.ImplChatServer {
 	if s.chatServerImpl == nil {
-		s.chatServerImpl = api.NewImplementation(s.ChatService(ctx))
+		s.chatServerImpl = api.NewChatServerGRPCImplementation(s.ChatService(ctx))
 	}
+
 	return s.chatServerImpl
 }

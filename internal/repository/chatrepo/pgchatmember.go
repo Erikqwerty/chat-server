@@ -1,4 +1,4 @@
-package chatserverrepository
+package chatrepo
 
 import (
 	"context"
@@ -8,9 +8,8 @@ import (
 	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
-	"github.com/erikqwerty/chat-server/internal/repository/chat/convertor"
-
-	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat/model"
+	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/convertor"
+	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/modelrepo"
 )
 
 var _ repository.ChatMember = (*repoChatMember)(nil)
@@ -30,7 +29,6 @@ type repoChatMember struct {
 // CreateChatMember - сохраняет нового пользователя  в таблице chat_members
 // с указание чата в котором тот находится
 func (repo *repoChatMember) CreateChatMember(ctx context.Context, member *model.ChatMember) error {
-
 	if err := checkMemberInChat(ctx, repo, member); err != nil {
 		return err
 	}
@@ -38,7 +36,8 @@ func (repo *repoChatMember) CreateChatMember(ctx context.Context, member *model.
 	query := sq.
 		Insert(tableChatMember).
 		Columns(membersChatID, membersUserEmail, membersJoinedAt).
-		Values(member.ChatID, member.UserEmail, member.JoinedAt).PlaceholderFormat(sq.Dollar)
+		Values(member.ChatID, member.UserEmail, member.JoinedAt).
+		PlaceholderFormat(sq.Dollar)
 
 	sql, arg, err := query.ToSql()
 	if err != nil {
@@ -63,7 +62,8 @@ func (repo *repoChatMember) ReadChatMember(ctx context.Context, member *model.Ch
 	query := sq.
 		Select(membersChatID, membersUserEmail, membersJoinedAt).
 		From(tableChatMember).
-		Where(sq.Eq{membersChatID: member.ChatID, membersUserEmail: member.UserEmail}).PlaceholderFormat(sq.Dollar)
+		Where(sq.Eq{membersChatID: member.ChatID, membersUserEmail: member.UserEmail}).
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -76,6 +76,7 @@ func (repo *repoChatMember) ReadChatMember(ctx context.Context, member *model.Ch
 	}
 
 	chatmember := &modelrepo.ChatMember{}
+
 	err = repo.db.DB().ScanOneContext(ctx, chatmember, q, args...)
 	if err != nil {
 		return nil, err
@@ -90,7 +91,8 @@ func (repo *repoChatMember) ReadChatMembers(ctx context.Context, chatID int) ([]
 		Select(membersChatID, membersUserEmail, membersJoinedAt).
 		From(tableChatMember).
 		Where(sq.Eq{membersChatID: chatID}).
-		OrderBy("joined_at ASC").PlaceholderFormat(sq.Dollar)
+		OrderBy("joined_at ASC").
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -103,6 +105,7 @@ func (repo *repoChatMember) ReadChatMembers(ctx context.Context, chatID int) ([]
 	}
 
 	var members []*modelrepo.ChatMember
+
 	err = repo.db.DB().ScanAllContext(ctx, &members, q, args...)
 	if err != nil {
 		return nil, err
@@ -128,6 +131,7 @@ func (repo *repoChatMember) DeleteChatMember(ctx context.Context, member *model.
 	if execErr != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -136,7 +140,8 @@ func checkMemberInChat(ctx context.Context, repo *repoChatMember, member *model.
 	checkQuery := sq.
 		Select("1").
 		From(tableChatMember).
-		Where(sq.Eq{membersChatID: member.ChatID, membersUserEmail: member.UserEmail}).PlaceholderFormat(sq.Dollar)
+		Where(sq.Eq{membersChatID: member.ChatID, membersUserEmail: member.UserEmail}).
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := checkQuery.ToSql()
 	if err != nil {
@@ -149,6 +154,7 @@ func checkMemberInChat(ctx context.Context, repo *repoChatMember, member *model.
 	}
 
 	var exists int
+
 	err = repo.db.DB().ScanOneContext(ctx, &exists, q, args...)
 	if err == nil {
 		return err

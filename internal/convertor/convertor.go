@@ -1,9 +1,10 @@
 package convertor
 
 import (
+	"google.golang.org/protobuf/types/known/timestamppb"
+
 	"github.com/erikqwerty/chat-server/internal/model"
 	desc "github.com/erikqwerty/chat-server/pkg/chatapi_v1"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // ToModelCreateChatFromCreateReq - конвертор из api слоя в сервисыный создание чата

@@ -1,9 +1,10 @@
-package chatserverrepository
+package chatrepo
 
 import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
+
 	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
@@ -25,7 +26,8 @@ type repoLoger struct {
 
 // CreateLog - записываем лог
 func (r *repoLoger) CreateLog(ctx context.Context, log *model.Log) error {
-	query := sq.Insert(tableLogs).
+	query := sq.
+		Insert(tableLogs).
 		Columns(actionType, actionDetails, actionTimestamp).
 		Values(log.ActionType, log.ActionDetails, log.ActionTimestamp).
 		PlaceholderFormat(sq.Dollar)

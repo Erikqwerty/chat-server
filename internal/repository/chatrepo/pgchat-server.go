@@ -1,4 +1,4 @@
-package chatserverrepository
+package chatrepo
 
 import (
 	"github.com/erikqwerty/chat-server/internal/client/db"

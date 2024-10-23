@@ -4,11 +4,12 @@ import (
 	"context"
 	"time"
 
+	"google.golang.org/grpc/peer"
+
 	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
 	dev "github.com/erikqwerty/chat-server/internal/service"
-	"google.golang.org/grpc/peer"
 )
 
 var _ dev.ChatService = (*service)(nil)
@@ -35,23 +36,27 @@ func NewService(chatRepository repository.ChatServerRepository, txManager db.TxM
 
 // createLog - записывает лог в базу даных
 func (s *service) createLog(ctx context.Context, actionType string) error {
-	errTx := s.chatRepository.CreateLog(ctx, &model.Log{
-		ActionType:      actionType,
-		ActionDetails:   details(ctx),
-		ActionTimestamp: timeNowUTC3(),
-	})
+	errTx := s.chatRepository.CreateLog(ctx,
+		&model.Log{
+			ActionType:      actionType,
+			ActionDetails:   details(ctx),
+			ActionTimestamp: timeNowUTC3(),
+		})
 
 	if errTx != nil {
 		return errTx
 	}
+
 	return nil
 }
 
 // details - информация о пользователе
 func details(ctx context.Context) string {
 	info := "Адрес:"
+
 	peer, _ := peer.FromContext(ctx)
 	info += peer.Addr.String()
+
 	return info
 }
 

@@ -1,15 +1,16 @@
-package chatserverrepository
+package chatrepo
 
 import (
 	"context"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+
 	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
-	"github.com/erikqwerty/chat-server/internal/repository/chat/convertor"
-	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat/model"
+	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/convertor"
+	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/modelrepo"
 )
 
 const (
@@ -47,6 +48,7 @@ func (repo *repoMessage) CreateMessage(ctx context.Context, message *model.Messa
 	}
 
 	var messageID int
+
 	err = repo.db.DB().ScanOneContext(ctx, &messageID, q, args...)
 	if err != nil {
 		return 0, err
@@ -61,7 +63,8 @@ func (repo *repoMessage) ReadMessages(ctx context.Context, chatID int) ([]*model
 		Select(messagesID, messagesChatID, messagesUserEmail, messagesText, messagesTimestamp).
 		From(tableMessages).
 		Where(sq.Eq{membersChatID: chatID}).
-		OrderBy("timestamp ASC").PlaceholderFormat(sq.Dollar)
+		OrderBy("timestamp ASC").
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -74,6 +77,7 @@ func (repo *repoMessage) ReadMessages(ctx context.Context, chatID int) ([]*model
 	}
 
 	var messages []*modelrepo.Message
+
 	err = repo.db.DB().ScanAllContext(ctx, &messages, q, args...)
 	if err != nil {
 		return nil, err
@@ -84,7 +88,10 @@ func (repo *repoMessage) ReadMessages(ctx context.Context, chatID int) ([]*model
 
 // DeleteMessage - удаляет сообщение из базы данных по его (id)
 func (repo *repoMessage) DeleteMessage(ctx context.Context, id int) error {
-	query := sq.Delete(tableMessages).Where(sq.Eq{messagesID: id}).PlaceholderFormat(sq.Dollar)
+	query := sq.
+		Delete(tableMessages).
+		Where(sq.Eq{messagesID: id}).
+		PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {

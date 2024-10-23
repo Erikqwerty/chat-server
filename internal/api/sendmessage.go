@@ -11,7 +11,7 @@ import (
 )
 
 // SendMessage - обрабатывает запрос на отправку сообщения
-func (i *Implementation) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
+func (i *ImplChatServer) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 	if !isValidEmail(req.From) {
 		return nil, errors.New("email не валиден")
 	}
@@ -20,5 +20,6 @@ func (i *Implementation) SendMessage(ctx context.Context, req *desc.SendMessageR
 	if err != nil {
 		return nil, err
 	}
+
 	return nil, nil
 }
