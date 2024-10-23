@@ -27,7 +27,7 @@ type Message struct {
 
 // JoinChat
 type JoinChat struct {
-	Chat
+	*Chat
 	Members  []string
 	Messages []*Message
 }

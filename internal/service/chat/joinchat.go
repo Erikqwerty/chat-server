@@ -11,5 +11,30 @@ func (s *service) JoinChat(ctx context.Context, chatMember *model.ChatMember) (*
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+
+	chat, err := s.chatRepository.ReadChat(ctx, chatMember.ChatID)
+	if err != nil {
+		return nil, err
+	}
+
+	members, err := s.chatRepository.ReadChatMembers(ctx, chatMember.ChatID)
+	if err != nil {
+		return nil, err
+	}
+
+	emails := make([]string, len(members))
+	for i, member := range members {
+		emails[i] = member.UserEmail
+	}
+
+	messages, err := s.chatRepository.ReadMessages(ctx, chatMember.ChatID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.JoinChat{
+		Chat:     chat,
+		Members:  emails,
+		Messages: messages,
+	}, nil
 }
