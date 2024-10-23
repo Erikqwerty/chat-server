@@ -5,6 +5,9 @@ import (
 	"log"
 
 	"github.com/erikqwerty/chat-server/internal/api"
+	"github.com/erikqwerty/chat-server/internal/client/db"
+	"github.com/erikqwerty/chat-server/internal/client/db/pg"
+	"github.com/erikqwerty/chat-server/internal/client/db/transaction"
 	"github.com/erikqwerty/chat-server/internal/closer"
 	"github.com/erikqwerty/chat-server/internal/config"
 	"github.com/erikqwerty/chat-server/internal/repository"
@@ -18,7 +21,10 @@ type serviceProvider struct {
 	pgConfig   config.PGConfig
 	grpcConfig config.GRPCConfig
 
-	pgPool               *pgxpool.Pool
+	pgPool *pgxpool.Pool
+
+	dbClient             db.Client
+	txManager            db.TxManager
 	chatServerRepository repository.ChatServerRepository
 
 	chatService service.ChatService
@@ -74,16 +80,41 @@ func (s serviceProvider) PgPool(ctx context.Context) *pgxpool.Pool {
 	return s.pgPool
 }
 
+func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
+
+	if s.dbClient == nil {
+		cl, err := pg.New(ctx, s.PGConfig().DSN())
+		if err != nil {
+			log.Fatalf("ошибка подключения к базе данных: %v", err)
+		}
+		err = cl.DB().Ping(ctx)
+		if err != nil {
+			log.Fatalf("ping до базы данных не проходит: %v", err)
+		}
+		closer.Add(cl.Close)
+		s.dbClient = cl
+	}
+	return s.dbClient
+}
+
+func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
+	if s.txManager == nil {
+		s.txManager = transaction.NewTransactionManager(s.DBClient(ctx).DB())
+	}
+
+	return s.txManager
+}
+
 func (s *serviceProvider) ChatServerRepository(ctx context.Context) repository.ChatServerRepository {
 	if s.chatServerRepository == nil {
-		s.chatServerRepository = chatserverrepository.NewRepo(s.PgPool(ctx))
+		s.chatServerRepository = chatserverrepository.NewRepo(s.DBClient(ctx))
 	}
 	return s.chatServerRepository
 }
 
 func (s *serviceProvider) ChatService(ctx context.Context) service.ChatService {
 	if s.chatService == nil {
-		s.chatService = chatservice.NewService(s.ChatServerRepository(ctx))
+		s.chatService = chatservice.NewService(s.ChatServerRepository(ctx), s.TxManager(ctx))
 	}
 	return s.chatService
 }

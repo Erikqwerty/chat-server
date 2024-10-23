@@ -4,8 +4,8 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v4/pgxpool"
 
+	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
 	"github.com/erikqwerty/chat-server/internal/repository/chat/convertor"
@@ -24,14 +24,14 @@ const (
 )
 
 type repoChatMember struct {
-	pool *pgxpool.Pool
+	db db.Client
 }
 
 // CreateChatMember - сохраняет нового пользователя  в таблице chat_members
 // с указание чата в котором тот находится
-func (pg *repoChatMember) CreateChatMember(ctx context.Context, member *model.ChatMember) error {
+func (repo *repoChatMember) CreateChatMember(ctx context.Context, member *model.ChatMember) error {
 
-	if err := checkMemberInChat(ctx, pg, member); err != nil {
+	if err := checkMemberInChat(ctx, repo, member); err != nil {
 		return err
 	}
 
@@ -45,7 +45,12 @@ func (pg *repoChatMember) CreateChatMember(ctx context.Context, member *model.Ch
 		return err
 	}
 
-	_, err = pg.pool.Exec(ctx, sql, arg...)
+	q := db.Query{
+		Name:     "chat_repository_CCreateChatMember",
+		QueryRaw: sql,
+	}
+
+	_, err = repo.db.DB().ExecContext(ctx, q, arg...)
 	if err != nil {
 		return err
 	}
@@ -54,7 +59,7 @@ func (pg *repoChatMember) CreateChatMember(ctx context.Context, member *model.Ch
 }
 
 // ReadChatMember - достает из базы данных участника (UserEmail) чата (chatID) при наличии
-func (pg *repoChatMember) ReadChatMember(ctx context.Context, member *model.ChatMember) (*model.ChatMember, error) {
+func (repo *repoChatMember) ReadChatMember(ctx context.Context, member *model.ChatMember) (*model.ChatMember, error) {
 	query := sq.
 		Select(membersChatID, membersUserEmail, membersJoinedAt).
 		From(tableChatMember).
@@ -65,10 +70,13 @@ func (pg *repoChatMember) ReadChatMember(ctx context.Context, member *model.Chat
 		return nil, err
 	}
 
-	row := pg.pool.QueryRow(ctx, sql, args...)
+	q := db.Query{
+		Name:     "chat_repository_ReadChatMember",
+		QueryRaw: sql,
+	}
 
 	chatmember := &modelrepo.ChatMember{}
-	err = row.Scan(&chatmember.ChatID, &chatmember.UserEmail, &chatmember.JoinedAt)
+	err = repo.db.DB().ScanOneContext(ctx, chatmember, q, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +85,7 @@ func (pg *repoChatMember) ReadChatMember(ctx context.Context, member *model.Chat
 }
 
 // ReadChatMembers - достает из базы данных список участников ([]*db.ChatMember) чата (chatID)
-func (pg *repoChatMember) ReadChatMembers(ctx context.Context, chatID int) ([]*model.ChatMember, error) {
+func (repo *repoChatMember) ReadChatMembers(ctx context.Context, chatID int) ([]*model.ChatMember, error) {
 	query := sq.
 		Select(membersChatID, membersUserEmail, membersJoinedAt).
 		From(tableChatMember).
@@ -89,38 +97,34 @@ func (pg *repoChatMember) ReadChatMembers(ctx context.Context, chatID int) ([]*m
 		return nil, err
 	}
 
-	rows, err := pg.pool.Query(ctx, sql, args...)
-	if err != nil {
-		return nil, err
+	q := db.Query{
+		Name:     "chat_repository_ReadChatMembers",
+		QueryRaw: sql,
 	}
-	defer rows.Close()
 
 	var members []*modelrepo.ChatMember
-	for rows.Next() {
-		member := &modelrepo.ChatMember{}
-		err := rows.Scan(&member.ChatID, &member.UserEmail, &member.JoinedAt)
-		if err != nil {
-			return nil, err
-		}
-		members = append(members, member)
-	}
-
-	if rows.Err() != nil {
-		return nil, rows.Err()
+	err = repo.db.DB().ScanAllContext(ctx, &members, q, args...)
+	if err != nil {
+		return nil, err
 	}
 
 	return convertor.ToChatMembersFromRepo(members), nil
 }
 
 // DeleteChatMember - удаляет участника чата по его (userEmail), в указаном чате (chatID)
-func (pg *repoChatMember) DeleteChatMember(ctx context.Context, member *model.ChatMember) error {
+func (repo *repoChatMember) DeleteChatMember(ctx context.Context, member *model.ChatMember) error {
 	query := sq.Delete(tableChatMember).Where(sq.Eq{membersChatID: member.ChatID, membersUserEmail: member.UserEmail}).PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
 		return err
 	}
-	_, execErr := pg.pool.Exec(ctx, sql, args...)
+
+	q := db.Query{
+		Name:     "chat_repository_DeleteChatMember",
+		QueryRaw: sql,
+	}
+	_, execErr := repo.db.DB().ExecContext(ctx, q, args...)
 	if execErr != nil {
 		return err
 	}
@@ -128,7 +132,7 @@ func (pg *repoChatMember) DeleteChatMember(ctx context.Context, member *model.Ch
 }
 
 // checkMemberInChat - проверяет, состоит ли пользователь в чате
-func checkMemberInChat(ctx context.Context, pg *repoChatMember, member *model.ChatMember) error {
+func checkMemberInChat(ctx context.Context, repo *repoChatMember, member *model.ChatMember) error {
 	checkQuery := sq.
 		Select("1").
 		From(tableChatMember).
@@ -139,8 +143,13 @@ func checkMemberInChat(ctx context.Context, pg *repoChatMember, member *model.Ch
 		return err
 	}
 
+	q := db.Query{
+		Name:     "chat_repository_checkMemberInChat",
+		QueryRaw: sql,
+	}
+
 	var exists int
-	err = pg.pool.QueryRow(ctx, sql, args...).Scan(&exists)
+	err = repo.db.DB().ScanOneContext(ctx, &exists, q, args...)
 	if err == nil {
 		return err
 	} else if err.Error() == "no rows in result set" {

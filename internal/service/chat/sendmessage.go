@@ -7,7 +7,14 @@ import (
 )
 
 func (s *service) SendMessage(ctx context.Context, msg *model.Message) error {
-	_, err := s.chatRepository.CreateMessage(ctx, msg)
+
+	err := s.txManager.ReadCommitted(ctx, func(ctx context.Context) error {
+		_, err := s.chatRepository.CreateMessage(ctx, msg)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return err
 	}

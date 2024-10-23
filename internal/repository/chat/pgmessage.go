@@ -5,12 +5,11 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
 	"github.com/erikqwerty/chat-server/internal/repository/chat/convertor"
 	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat/model"
-
-	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 const (
@@ -26,11 +25,11 @@ const (
 var _ repository.Message = (*repoMessage)(nil)
 
 type repoMessage struct {
-	pool *pgxpool.Pool
+	db db.Client
 }
 
 // CreateMessage - сохраняет новое сообщение в базе данных и возвращает ID записи.
-func (pg *repoMessage) CreateMessage(ctx context.Context, message *model.Message) (int, error) {
+func (repo *repoMessage) CreateMessage(ctx context.Context, message *model.Message) (int, error) {
 	query := sq.
 		Insert(tableMessages).
 		Columns(messagesChatID, messagesUserEmail, messagesText, messagesTimestamp).
@@ -42,8 +41,13 @@ func (pg *repoMessage) CreateMessage(ctx context.Context, message *model.Message
 		return 0, err
 	}
 
+	q := db.Query{
+		Name:     "chat_repository_CreateMessage",
+		QueryRaw: sql,
+	}
+
 	var messageID int
-	err = pg.pool.QueryRow(ctx, sql, args...).Scan(&messageID)
+	err = repo.db.DB().ScanOneContext(ctx, &messageID, q, args...)
 	if err != nil {
 		return 0, err
 	}
@@ -52,7 +56,7 @@ func (pg *repoMessage) CreateMessage(ctx context.Context, message *model.Message
 }
 
 // ReadMessages - достает из указанного чата список сообщений
-func (pg *repoMessage) ReadMessages(ctx context.Context, chatID int) ([]*model.Message, error) {
+func (repo *repoMessage) ReadMessages(ctx context.Context, chatID int) ([]*model.Message, error) {
 	query := sq.
 		Select(messagesID, messagesChatID, messagesUserEmail, messagesText, messagesTimestamp).
 		From(tableMessages).
@@ -64,31 +68,22 @@ func (pg *repoMessage) ReadMessages(ctx context.Context, chatID int) ([]*model.M
 		return nil, err
 	}
 
-	rows, err := pg.pool.Query(ctx, sql, args...)
-	if err != nil {
-		return nil, err
+	q := db.Query{
+		Name:     "chat_repository_ReadMessages",
+		QueryRaw: sql,
 	}
-	defer rows.Close()
 
 	var messages []*modelrepo.Message
-	for rows.Next() {
-		msg := &modelrepo.Message{}
-		err := rows.Scan(&msg.ID, &msg.ChatID, &msg.UserEmail, &msg.Text, &msg.Timestamp)
-		if err != nil {
-			return nil, err
-		}
-		messages = append(messages, msg)
-	}
-
-	if rows.Err() != nil {
-		return nil, rows.Err()
+	err = repo.db.DB().ScanAllContext(ctx, &messages, q, args...)
+	if err != nil {
+		return nil, err
 	}
 
 	return convertor.ToMessagesFromRepo(messages), nil
 }
 
 // DeleteMessage - удаляет сообщение из базы данных по его (id)
-func (pg *repoMessage) DeleteMessage(ctx context.Context, id int) error {
+func (repo *repoMessage) DeleteMessage(ctx context.Context, id int) error {
 	query := sq.Delete(tableMessages).Where(sq.Eq{messagesID: id}).PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
@@ -96,7 +91,12 @@ func (pg *repoMessage) DeleteMessage(ctx context.Context, id int) error {
 		return err
 	}
 
-	_, err = pg.pool.Exec(ctx, sql, args...)
+	q := db.Query{
+		Name:     "chat_repository_DeleteMessage",
+		QueryRaw: sql,
+	}
+
+	_, err = repo.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
 		return err
 	}
