@@ -11,6 +11,7 @@ type ChatServerRepository interface {
 	Chat
 	ChatMember
 	Message
+	RepoLoger
 }
 
 // Chat определяет контракт для работы с таблицой chats
@@ -45,4 +46,10 @@ type Message interface {
 	ReadMessages(context.Context, int) ([]*model.Message, error)
 	// DeleteMessage удаляет сообщение по ID
 	DeleteMessage(context.Context, int) error
+}
+
+// RepoLoger - интерфейс для взаимодействия с базой данных таблицой логов.
+type RepoLoger interface {
+	// CreateLog - Записывает действие в бд в лог таблицу
+	CreateLog(ctx context.Context, log *model.Log) error
 }

@@ -30,6 +30,11 @@ func (s *service) JoinChat(ctx context.Context, chatMember *model.ChatMember) (*
 		if err != nil {
 			return err
 		}
+
+		if err := s.createLog(ctx, actionTypeJounChat); err != nil {
+			return err
+		}
+
 		return nil
 	})
 

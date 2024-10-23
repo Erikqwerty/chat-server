@@ -2,7 +2,6 @@ package chatservice
 
 import (
 	"context"
-	"time"
 
 	"github.com/erikqwerty/chat-server/internal/model"
 )
@@ -28,6 +27,9 @@ func (s *service) CreateChat(ctx context.Context, chat *model.CreateChat) (int64
 				return errTX
 			}
 		}
+		if err := s.createLog(ctx, actionTypeCreateChat); err != nil {
+			return err
+		}
 
 		return nil
 	})
@@ -37,9 +39,4 @@ func (s *service) CreateChat(ctx context.Context, chat *model.CreateChat) (int64
 	}
 
 	return int64(id), nil
-}
-
-// timeNowUTC3 + возвращает время +3
-func timeNowUTC3() time.Time {
-	return time.Now().In(time.FixedZone("UTC+3", 3*60*60))
 }

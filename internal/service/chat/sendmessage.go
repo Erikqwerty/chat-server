@@ -13,10 +13,15 @@ func (s *service) SendMessage(ctx context.Context, msg *model.Message) error {
 		if err != nil {
 			return err
 		}
+		if err := s.createLog(ctx, actionTypeSendMessage); err != nil {
+			return err
+		}
 		return nil
 	})
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

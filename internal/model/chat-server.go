@@ -37,3 +37,11 @@ type CreateChat struct {
 	ChatName     string
 	MembersEmail []string
 }
+
+// Log - структура для логирования действий в БД
+type Log struct {
+	ID              int64
+	ActionType      string
+	ActionDetails   string
+	ActionTimestamp time.Time
+}
