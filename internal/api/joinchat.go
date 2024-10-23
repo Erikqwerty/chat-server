@@ -10,7 +10,6 @@ import (
 
 // JoinChat - Обрабатывает запрос на подключение к чату
 func (i *ImplChatServer) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*desc.JoinChatResponse, error) {
-
 	if req.ChatId == 0 {
 		return nil, errors.New("не указан id чата")
 	}
