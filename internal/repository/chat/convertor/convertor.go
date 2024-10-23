@@ -2,7 +2,7 @@ package convertor
 
 import (
 	"github.com/erikqwerty/chat-server/internal/model"
-	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat-server/model"
+	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat/model"
 )
 
 // ToChatFromRepo - конвертор преобразующий структуру chat repo слоя в структуру бизнес-логики

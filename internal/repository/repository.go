@@ -16,33 +16,33 @@ type ChatServerRepository interface {
 // Chat определяет контракт для работы с таблицой chats
 type Chat interface {
 	// CreateChat создает новый чат
-	CreateChat(ctx context.Context, chatName string) (int, error)
+	CreateChat(context.Context, string) (int, error)
 	// ReadChat - Возвращает чат по его ID
-	ReadChat(ctx context.Context, id int) (*model.Chat, error)
+	ReadChat(context.Context, int) (*model.Chat, error)
 	// ReadChats - Возвращает список чатов
-	ReadChats(сtx context.Context) ([]*model.Chat, error)
+	ReadChats(context.Context) ([]*model.Chat, error)
 	// DeleteChat - удаляет чат по ID
-	DeleteChat(ctx context.Context, id int) error
+	DeleteChat(context.Context, int) error
 }
 
 // ChatMember определяет контракт для работы с таблицой chat_members
 type ChatMember interface {
 	// CreateChatMember - добавляет участника в чат
-	CreateChatMember(ctx context.Context, chatID int, userEmail string) error
+	CreateChatMember(context.Context, *model.ChatMember) error
 	// ReadChatMember - возвращает  участника чата если он есть
-	ReadChatMember(сtx context.Context, userEmail string, chatID int) (*model.ChatMember, error)
+	ReadChatMember(context.Context, *model.ChatMember) (*model.ChatMember, error)
 	// ReadChatMembers - возвращает список участников чата
-	ReadChatMembers(сtx context.Context, chatID int) ([]*model.ChatMember, error)
+	ReadChatMembers(context.Context, int) ([]*model.ChatMember, error)
 	// DeleteChatMember - удаляет участника из чата
-	DeleteChatMember(сtx context.Context, chatID int, userEmail string) error
+	DeleteChatMember(context.Context, *model.ChatMember) error
 }
 
 // Message определяет контракт для работы с таблицой messages
 type Message interface {
 	// CreateMessage - отправляет сообщение в чат
-	CreateMessage(ctx context.Context, chatID int, userEmail, text string) (int, error)
+	CreateMessage(context.Context, *model.Message) (int, error)
 	// ReadMessages - возвращает все сообщения из чата
-	ReadMessages(ctx context.Context, chatID int) ([]*model.Message, error)
+	ReadMessages(context.Context, int) ([]*model.Message, error)
 	// DeleteMessage удаляет сообщение по ID
-	DeleteMessage(ctx context.Context, id int) error
+	DeleteMessage(context.Context, int) error
 }

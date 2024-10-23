@@ -2,14 +2,15 @@ package chatserverrepository
 
 import (
 	"context"
-	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v4/pgxpool"
+
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
-	"github.com/erikqwerty/chat-server/internal/repository/chat-server/convertor"
-	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat-server/model"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/erikqwerty/chat-server/internal/repository/chat/convertor"
+
+	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat/model"
 )
 
 var _ repository.ChatMember = (*repoChatMember)(nil)
@@ -28,16 +29,16 @@ type repoChatMember struct {
 
 // CreateChatMember - сохраняет нового пользователя  в таблице chat_members
 // с указание чата в котором тот находится
-func (pg *repoChatMember) CreateChatMember(ctx context.Context, chatID int, userEmail string) error {
+func (pg *repoChatMember) CreateChatMember(ctx context.Context, member *model.ChatMember) error {
 
-	if err := checkMemberInChat(ctx, pg, chatID, userEmail); err != nil {
+	if err := checkMemberInChat(ctx, pg, member); err != nil {
 		return err
 	}
 
 	query := sq.
 		Insert(tableChatMember).
 		Columns(membersChatID, membersUserEmail, membersJoinedAt).
-		Values(chatID, userEmail, time.Now()).PlaceholderFormat(sq.Dollar)
+		Values(member.ChatID, member.UserEmail, member.JoinedAt).PlaceholderFormat(sq.Dollar)
 
 	sql, arg, err := query.ToSql()
 	if err != nil {
@@ -53,11 +54,11 @@ func (pg *repoChatMember) CreateChatMember(ctx context.Context, chatID int, user
 }
 
 // ReadChatMember - достает из базы данных участника (UserEmail) чата (chatID) при наличии
-func (pg *repoChatMember) ReadChatMember(ctx context.Context, UserEmail string, chatID int) (*model.ChatMember, error) {
+func (pg *repoChatMember) ReadChatMember(ctx context.Context, member *model.ChatMember) (*model.ChatMember, error) {
 	query := sq.
 		Select(membersChatID, membersUserEmail, membersJoinedAt).
 		From(tableChatMember).
-		Where(sq.Eq{membersChatID: chatID, membersUserEmail: UserEmail}).PlaceholderFormat(sq.Dollar)
+		Where(sq.Eq{membersChatID: member.ChatID, membersUserEmail: member.UserEmail}).PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -66,13 +67,13 @@ func (pg *repoChatMember) ReadChatMember(ctx context.Context, UserEmail string, 
 
 	row := pg.pool.QueryRow(ctx, sql, args...)
 
-	member := &modelrepo.ChatMember{}
-	err = row.Scan(&member.ChatID, &member.UserEmail, &member.JoinedAt)
+	chatmember := &modelrepo.ChatMember{}
+	err = row.Scan(&chatmember.ChatID, &chatmember.UserEmail, &chatmember.JoinedAt)
 	if err != nil {
 		return nil, err
 	}
 
-	return convertor.ToChatMemberFromRepo(member), nil
+	return convertor.ToChatMemberFromRepo(chatmember), nil
 }
 
 // ReadChatMembers - достает из базы данных список участников ([]*db.ChatMember) чата (chatID)
@@ -112,8 +113,8 @@ func (pg *repoChatMember) ReadChatMembers(ctx context.Context, chatID int) ([]*m
 }
 
 // DeleteChatMember - удаляет участника чата по его (userEmail), в указаном чате (chatID)
-func (pg *repoChatMember) DeleteChatMember(ctx context.Context, chatID int, userEmail string) error {
-	query := sq.Delete(tableChatMember).Where(sq.Eq{membersChatID: chatID, membersUserEmail: userEmail}).PlaceholderFormat(sq.Dollar)
+func (pg *repoChatMember) DeleteChatMember(ctx context.Context, member *model.ChatMember) error {
+	query := sq.Delete(tableChatMember).Where(sq.Eq{membersChatID: member.ChatID, membersUserEmail: member.UserEmail}).PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -127,11 +128,11 @@ func (pg *repoChatMember) DeleteChatMember(ctx context.Context, chatID int, user
 }
 
 // checkMemberInChat - проверяет, состоит ли пользователь в чате
-func checkMemberInChat(ctx context.Context, pg *repoChatMember, chatID int, userEmail string) error {
+func checkMemberInChat(ctx context.Context, pg *repoChatMember, member *model.ChatMember) error {
 	checkQuery := sq.
 		Select("1").
 		From(tableChatMember).
-		Where(sq.Eq{membersChatID: chatID, membersUserEmail: userEmail}).PlaceholderFormat(sq.Dollar)
+		Where(sq.Eq{membersChatID: member.ChatID, membersUserEmail: member.UserEmail}).PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := checkQuery.ToSql()
 	if err != nil {

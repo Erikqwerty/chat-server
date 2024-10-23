@@ -7,8 +7,9 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
-	"github.com/erikqwerty/chat-server/internal/repository/chat-server/convertor"
-	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat-server/model"
+	"github.com/erikqwerty/chat-server/internal/repository/chat/convertor"
+	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat/model"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
@@ -29,11 +30,11 @@ type repoMessage struct {
 }
 
 // CreateMessage - сохраняет новое сообщение в базе данных и возвращает ID записи.
-func (pg *repoMessage) CreateMessage(ctx context.Context, chatID int, userEmail, text string) (int, error) {
+func (pg *repoMessage) CreateMessage(ctx context.Context, message *model.Message) (int, error) {
 	query := sq.
 		Insert(tableMessages).
 		Columns(messagesChatID, messagesUserEmail, messagesText, messagesTimestamp).
-		Values(chatID, userEmail, text, time.Now()).
+		Values(message.ChatID, message.UserEmail, message.Text, time.Now()).
 		Suffix("RETURNING id").PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()

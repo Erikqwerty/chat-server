@@ -24,3 +24,15 @@ type Message struct {
 	Text      string
 	Timestamp time.Time
 }
+
+// JoinChat
+type JoinChat struct {
+	Chat
+	Members  []string
+	Messages []*Message
+}
+
+type CreateChat struct {
+	ChatName     string
+	MembersEmail []string
+}

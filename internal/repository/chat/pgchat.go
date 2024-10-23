@@ -9,8 +9,8 @@ import (
 
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
-	"github.com/erikqwerty/chat-server/internal/repository/chat-server/convertor"
-	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat-server/model"
+	"github.com/erikqwerty/chat-server/internal/repository/chat/convertor"
+	modelrepo "github.com/erikqwerty/chat-server/internal/repository/chat/model"
 )
 
 var _ repository.Chat = (*repoChat)(nil)
@@ -28,12 +28,12 @@ type repoChat struct {
 }
 
 // CreateChat - сохраняет запись о новом чате  в базе данных
-func (pg *repoChat) CreateChat(ctx context.Context, chatName string) (int, error) {
+func (pg *repoChat) CreateChat(ctx context.Context, chat string) (int, error) {
 
 	query := sq.
 		Insert(tableChat).
 		Columns(chatName, chatCreatedAt).
-		Values(chatName, time.Now()).
+		Values(chat, time.Now()).
 		Suffix("RETURNING id").PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()
