@@ -25,13 +25,14 @@ type Message struct {
 	Timestamp time.Time
 }
 
-// JoinChat
+// JoinChat - представляет ответ из сервисного слоя на добавление нового участника чата
 type JoinChat struct {
 	*Chat
 	Members  []string
 	Messages []*Message
 }
 
+// CreateChat - преставляет запрос на создание чата в сервисном слое
 type CreateChat struct {
 	ChatName     string
 	MembersEmail []string

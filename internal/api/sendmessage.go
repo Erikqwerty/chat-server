@@ -9,6 +9,7 @@ import (
 	desc "github.com/erikqwerty/chat-server/pkg/chatapi_v1"
 )
 
+// SendMessage - обрабатывает запрос на отправку сообщения
 func (i *Implementation) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 	err := i.chatService.SendMessage(ctx, convertor.ToModelMessageFromReqSendMessage(req))
 	if err != nil {

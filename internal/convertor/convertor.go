@@ -14,6 +14,7 @@ func ToModelCreateChatFromCreateReq(req *desc.CreateRequest) *model.CreateChat {
 	}
 }
 
+// ToModelChatMemberFromJoinChatRequest desc.JoinChatRequest --> model.ChatMember
 func ToModelChatMemberFromJoinChatRequest(req *desc.JoinChatRequest) *model.ChatMember {
 	return &model.ChatMember{
 		ChatID:    int(req.ChatId),
@@ -21,7 +22,8 @@ func ToModelChatMemberFromJoinChatRequest(req *desc.JoinChatRequest) *model.Chat
 	}
 }
 
-func ToChatApiJoinRespFromModelJoinChat(joinChat *model.JoinChat) *desc.JoinChatResponse {
+// ToChatAPIJoinRespFromModelJoinChat - преобразует model.JoinChat --> desc.JoinChatResponse
+func ToChatAPIJoinRespFromModelJoinChat(joinChat *model.JoinChat) *desc.JoinChatResponse {
 	messages := make([]*desc.Message, len(joinChat.Messages))
 	for i, mess := range joinChat.Messages {
 		messages[i] = &desc.Message{
@@ -38,6 +40,7 @@ func ToChatApiJoinRespFromModelJoinChat(joinChat *model.JoinChat) *desc.JoinChat
 	}
 }
 
+// ToModelMessageFromReqSendMessage desc.SendMessageRequest --> model.Message
 func ToModelMessageFromReqSendMessage(req *desc.SendMessageRequest) *model.Message {
 	return &model.Message{
 		ChatID:    int(req.ChatId),

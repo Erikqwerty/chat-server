@@ -14,7 +14,7 @@ func ToChatFromRepo(modeldb *modelrepo.Chat) *model.Chat {
 	}
 }
 
-// ToChatFromRepo - конвертор преобразующий набор структур chat repo слоя в структуру бизнес-логики
+// ToChatsFromRepo - конвертор преобразующий набор структур chat repo слоя в структуру бизнес-логики
 func ToChatsFromRepo(modeldb []*modelrepo.Chat) []*model.Chat {
 
 	chats := make([]*model.Chat, len(modeldb))
@@ -39,7 +39,7 @@ func ToChatMemberFromRepo(modeldb *modelrepo.ChatMember) *model.ChatMember {
 	}
 }
 
-// ToChatMemberFromRepo - конвертор преобразующий набор структур ChatMember  repo слоя в структуру бизнес-логики
+// ToChatMembersFromRepo - конвертор преобразующий набор структур ChatMember  repo слоя в структуру бизнес-логики
 func ToChatMembersFromRepo(modeldb []*modelrepo.ChatMember) []*model.ChatMember {
 	chatMember := make([]*model.ChatMember, len(modeldb))
 

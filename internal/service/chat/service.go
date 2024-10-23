@@ -13,6 +13,7 @@ type service struct {
 	txManager      db.TxManager
 }
 
+// NewService - создает новый обьект сервисного слоя
 func NewService(chatRepository repository.ChatServerRepository, txManager db.TxManager) dev.ChatService {
 	return &service{
 		chatRepository: chatRepository,
