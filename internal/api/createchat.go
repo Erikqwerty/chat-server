@@ -12,6 +12,14 @@ import (
 
 // CreateChat - обрабатывает запрос на создание чата
 func (i *ImplChatServer) CreateChat(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
+	if req.ChatName == "" {
+		return nil, errors.New("не указанно название чата")
+	}
+
+	if len(req.Emails) == 0 {
+		return nil, errors.New("не указанны участники чата")
+	}
+
 	err := validEmails(req.Emails)
 	if err != nil {
 		return nil, err

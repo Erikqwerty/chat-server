@@ -12,6 +12,18 @@ import (
 
 // SendMessage - обрабатывает запрос на отправку сообщения
 func (i *ImplChatServer) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
+	if req.From == "" {
+		return nil, errors.New("не указан отправитель сообщения")
+	}
+
+	if req.Text == "" {
+		return nil, errors.New("текст сообщения пустой")
+	}
+
+	if req.ChatId == 0 {
+		return nil, errors.New("не указан чат в который отправляется сообщение")
+	}
+
 	if !isValidEmail(req.From) {
 		return nil, errors.New("email не валиден")
 	}
