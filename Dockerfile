@@ -4,7 +4,7 @@ COPY . /github.com/erikqwerty/chat-server/
 WORKDIR /github.com/erikqwerty/chat-server/
 
 RUN go mod download
-RUN go build -o ./bin/chat-server cmd/chat-server/main.go
+RUN go build -o ./bin/chat-server cmd/chat/main.go
 
 FROM alpine:latest
 
