@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/jackc/pgx/v4/pgxpool"
-
 	"github.com/erikqwerty/chat-server/internal/api"
 	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/client/db/pg"
@@ -22,8 +20,6 @@ type serviceProvider struct {
 	pgConfig   config.PGConfig
 	grpcConfig config.GRPCConfig
 
-	pgPool *pgxpool.Pool
-
 	dbClient             db.Client
 	txManager            db.TxManager
 	chatServerRepository repository.ChatServerRepository
@@ -37,6 +33,7 @@ func newServiceProvider() *serviceProvider {
 	return &serviceProvider{}
 }
 
+// PGConfig - инициализирует конфигурацию базы данных
 func (s *serviceProvider) PGConfig() config.PGConfig {
 	if s.pgConfig == nil {
 		cfg, err := config.NewPGConfig()
@@ -50,6 +47,7 @@ func (s *serviceProvider) PGConfig() config.PGConfig {
 	return s.pgConfig
 }
 
+// GRPCConfig - инициализирует конфигурацию gRPC сервера
 func (s *serviceProvider) GRPCConfig() config.GRPCConfig {
 	if s.grpcConfig == nil {
 		cfg, err := config.NewGRPCConfig()
@@ -63,33 +61,7 @@ func (s *serviceProvider) GRPCConfig() config.GRPCConfig {
 	return s.grpcConfig
 }
 
-func (s serviceProvider) PgPool(ctx context.Context) *pgxpool.Pool {
-	if s.pgConfig == nil {
-		s.PGConfig()
-	}
-
-	if s.pgPool == nil {
-		pool, err := pgxpool.Connect(ctx, s.pgConfig.DSN())
-		if err != nil {
-			log.Fatalf("ошибка подключения к базе данных: %v", err)
-		}
-
-		err = pool.Ping(ctx)
-		if err != nil {
-			log.Fatalf("ping до базы данных не проходит: %v", err)
-		}
-
-		closer.Add(func() error {
-			pool.Close()
-			return nil
-		})
-
-		s.pgPool = pool
-	}
-
-	return s.pgPool
-}
-
+// DBClient - создает клиента для подключения к базе данных
 func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
 	if s.dbClient == nil {
 		cl, err := pg.New(ctx, s.PGConfig().DSN())
@@ -108,6 +80,7 @@ func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
 	return s.dbClient
 }
 
+// TxManager - инициализирует менеджер транзакций
 func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	if s.txManager == nil {
 		s.txManager = transaction.NewTransactionManager(s.DBClient(ctx).DB())
@@ -116,6 +89,7 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	return s.txManager
 }
 
+// ChatServerRepository инициализирует репозиторий chatserver для работы с бд
 func (s *serviceProvider) ChatServerRepository(ctx context.Context) repository.ChatServerRepository {
 	if s.chatServerRepository == nil {
 		s.chatServerRepository = chatrepo.NewRepo(s.DBClient(ctx))
@@ -124,6 +98,7 @@ func (s *serviceProvider) ChatServerRepository(ctx context.Context) repository.C
 	return s.chatServerRepository
 }
 
+// ChatService - инициализирует сервисный слой сервиса chatservice
 func (s *serviceProvider) ChatService(ctx context.Context) service.ChatService {
 	if s.chatService == nil {
 		s.chatService = chatservice.NewService(s.ChatServerRepository(ctx), s.TxManager(ctx))
@@ -132,6 +107,7 @@ func (s *serviceProvider) ChatService(ctx context.Context) service.ChatService {
 	return s.chatService
 }
 
+// ChatServerImpl - инициализирует иплиментацию gRPC сервера chatserver
 func (s *serviceProvider) ChatServerImpl(ctx context.Context) *api.ImplChatServer {
 	if s.chatServerImpl == nil {
 		s.chatServerImpl = api.NewChatServerGRPCImplementation(s.ChatService(ctx))
