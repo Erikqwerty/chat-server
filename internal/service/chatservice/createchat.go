@@ -8,6 +8,10 @@ import (
 
 // CreateChat - Логика создания чата
 func (s *service) CreateChat(ctx context.Context, chat *model.CreateChat) (int64, error) {
+	if chat == nil {
+		return 0, ErrCreateChatReq()
+	}
+
 	var id int
 
 	err := s.txManager.ReadCommitted(ctx, func(ctx context.Context) error {

@@ -7,6 +7,10 @@ import (
 )
 
 func (s *service) JoinChat(ctx context.Context, chatMember *model.ChatMember) (*model.JoinChat, error) {
+	if chatMember == nil {
+		return nil, ErrJoinChatReq()
+	}
+
 	var (
 		chat     *model.Chat
 		members  []*model.ChatMember

@@ -37,9 +37,9 @@ func ToChatAPIJoinRespFromModelJoinChat(joinChat *model.JoinChat) *desc.JoinChat
 	messages := make([]*desc.Message, len(joinChat.Messages))
 	for i, mess := range joinChat.Messages {
 		messages[i] = &desc.Message{
-			UserEmail: mess.UserEmail,
-			Text:      mess.Text,
-			Timestamp: timestamppb.New(mess.Timestamp),
+			FromUserEmail: mess.UserEmail,
+			Text:          mess.Text,
+			Timestamp:     timestamppb.New(mess.Timestamp),
 		}
 	}
 	return &desc.JoinChatResponse{
@@ -57,7 +57,7 @@ func ToModelMessageFromReqSendMessage(req *desc.SendMessageRequest) *model.Messa
 	}
 	return &model.Message{
 		ChatID:    int(req.ChatId),
-		UserEmail: req.UserEmail,
+		UserEmail: req.FromUserEmail,
 		Text:      req.Text,
 	}
 }
