@@ -12,7 +12,7 @@ func ValidEmails(emails []string) error {
 
 	for _, email := range emails {
 		if !IsValidEmail(email) {
-			errtext += fmt.Sprintf("email: %v не валиден;", email)
+			errtext += fmt.Sprintf("email: %v не валиден;\n", email)
 		}
 	}
 

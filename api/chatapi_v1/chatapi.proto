@@ -33,12 +33,12 @@ message CreateResponse {
 
 // Определение сообщения запроса для метода Delete (удаление чата)
 message DeleteRequest {
-  int64 id = 1;  // Идентификатор чата, который необходимо удалить
+  int64 chat_id = 1;  // Идентификатор чата, который необходимо удалить
 }
 
 // Определение сообщения запроса для метода SendMessage (отправка сообщения)
 message SendMessageRequest {
-  string user_email = 1;                      // Email отправителя сообщения
+  string from_user_email = 1;           // Email отправителя сообщения
   string text = 2;                      // Текст сообщения
   // Временная метка отправки сообщения
   google.protobuf.Timestamp timestamp = 3;  
@@ -65,7 +65,7 @@ message JoinChatResponse {
 
 // Определение структуры сообщения для хранения информации о сообщении
 message Message {
-  string user_email = 1;                       // Email отправителя сообщения
+  string from_user_email = 1;            // Email отправителя сообщения
   string text = 2;                       // Текст сообщения
   // Временная метка отправки сообщения
   google.protobuf.Timestamp timestamp = 3; 
