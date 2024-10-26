@@ -37,7 +37,7 @@ func ToChatAPIJoinRespFromModelJoinChat(joinChat *model.JoinChat) *desc.JoinChat
 	messages := make([]*desc.Message, len(joinChat.Messages))
 	for i, mess := range joinChat.Messages {
 		messages[i] = &desc.Message{
-			From:      mess.UserEmail,
+			UserEmail: mess.UserEmail,
 			Text:      mess.Text,
 			Timestamp: timestamppb.New(mess.Timestamp),
 		}

@@ -65,7 +65,7 @@ message JoinChatResponse {
 
 // Определение структуры сообщения для хранения информации о сообщении
 message Message {
-  string from = 1;                       // Email отправителя сообщения
+  string user_email = 1;                       // Email отправителя сообщения
   string text = 2;                       // Текст сообщения
   // Временная метка отправки сообщения
   google.protobuf.Timestamp timestamp = 3; 
