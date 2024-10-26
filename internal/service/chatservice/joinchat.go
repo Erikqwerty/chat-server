@@ -38,7 +38,7 @@ func (s *service) JoinChat(ctx context.Context, chatMember *model.ChatMember) (*
 			return err
 		}
 
-		if err := s.createLog(ctx, actionTypeJounChat); err != nil {
+		if err := s.writeLog(ctx, actionTypeJounChat); err != nil {
 			return err
 		}
 

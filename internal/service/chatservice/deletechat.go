@@ -9,7 +9,7 @@ func (s *service) DeleteChat(ctx context.Context, id int64) error {
 			return errTX
 		}
 
-		if err := s.createLog(ctx, actionTypeDeleteChat); err != nil {
+		if err := s.writeLog(ctx, actionTypeDeleteChat); err != nil {
 			return err
 		}
 

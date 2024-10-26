@@ -36,7 +36,7 @@ func (repo *repoChatMember) CreateChatMember(ctx context.Context, member *model.
 	query := sq.
 		Insert(tableChatMember).
 		Columns(membersChatID, membersUserEmail, membersJoinedAt).
-		Values(member.ChatID, member.UserEmail, member.JoinedAt).
+		Values(member.ChatID, member.UserEmail, sq.Expr("NOW()")).
 		PlaceholderFormat(sq.Dollar)
 
 	sql, arg, err := query.ToSql()

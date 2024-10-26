@@ -17,7 +17,7 @@ func (s *service) SendMessage(ctx context.Context, msg *model.Message) error {
 			return err
 		}
 
-		if err := s.createLog(ctx, actionTypeSendMessage); err != nil {
+		if err := s.writeLog(ctx, actionTypeSendMessage); err != nil {
 			return err
 		}
 

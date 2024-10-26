@@ -26,7 +26,6 @@ func (s *service) CreateChat(ctx context.Context, chat *model.CreateChat) (int64
 			m := &model.ChatMember{
 				ChatID:    id,
 				UserEmail: member,
-				JoinedAt:  timeNowUTC3(),
 			}
 
 			errTX = s.chatRepository.CreateChatMember(ctx, m)
@@ -35,7 +34,7 @@ func (s *service) CreateChat(ctx context.Context, chat *model.CreateChat) (int64
 			}
 		}
 
-		if err := s.createLog(ctx, actionTypeCreateChat); err != nil {
+		if err := s.writeLog(ctx, actionTypeCreateChat); err != nil {
 			return err
 		}
 

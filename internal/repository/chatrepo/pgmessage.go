@@ -2,7 +2,6 @@ package chatrepo
 
 import (
 	"context"
-	"time"
 
 	sq "github.com/Masterminds/squirrel"
 
@@ -34,7 +33,7 @@ func (repo *repoMessage) CreateMessage(ctx context.Context, message *model.Messa
 	query := sq.
 		Insert(tableMessages).
 		Columns(messagesChatID, messagesUserEmail, messagesText, messagesTimestamp).
-		Values(message.ChatID, message.UserEmail, message.Text, time.Now()).
+		Values(message.ChatID, message.UserEmail, message.Text, sq.Expr("NOW()")).
 		Suffix("RETURNING id").PlaceholderFormat(sq.Dollar)
 
 	sql, args, err := query.ToSql()

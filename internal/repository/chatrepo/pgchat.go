@@ -2,14 +2,12 @@ package chatrepo
 
 import (
 	"context"
-	"time"
 
 	sq "github.com/Masterminds/squirrel"
 
 	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
-
 	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/convertor"
 	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/modelrepo"
 )
@@ -33,7 +31,7 @@ func (repo *repoChat) CreateChat(ctx context.Context, chat string) (int, error) 
 	query := sq.
 		Insert(tableChat).
 		Columns(chatName, chatCreatedAt).
-		Values(chat, time.Now()).
+		Values(chat, sq.Expr("NOW()")).
 		Suffix("RETURNING id").
 		PlaceholderFormat(sq.Dollar)
 
