@@ -23,7 +23,7 @@ func ValidEmails(emails []string) error {
 	return nil
 }
 
-// isValidEmail проверяет валидность email-адреса. Возвращает true если валидно.
+// IsValidEmail проверяет валидность email-адреса. Возвращает true если валидно.
 func IsValidEmail(email string) bool {
 	const emailRegex = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 
