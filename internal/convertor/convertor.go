@@ -57,7 +57,7 @@ func ToModelMessageFromReqSendMessage(req *desc.SendMessageRequest) *model.Messa
 	}
 	return &model.Message{
 		ChatID:    int(req.ChatId),
-		UserEmail: req.From,
+		UserEmail: req.UserEmail,
 		Text:      req.Text,
 	}
 }
