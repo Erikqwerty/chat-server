@@ -59,5 +59,6 @@ func ToModelMessageFromReqSendMessage(req *desc.SendMessageRequest) *model.Messa
 		ChatID:    int(req.ChatId),
 		UserEmail: req.FromUserEmail,
 		Text:      req.Text,
+		Timestamp: req.Timestamp.AsTime(),
 	}
 }

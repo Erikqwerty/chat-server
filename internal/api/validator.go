@@ -90,5 +90,6 @@ func validateRequest(req interface{}) error {
 			}
 		}
 	}
+
 	return nil
 }
