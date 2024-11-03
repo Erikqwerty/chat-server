@@ -16,7 +16,7 @@ const (
 	actionTypeCreateChat  = "CREATE_CHAT"
 	actionTypeSendMessage = "SendMessage "
 	actionTypeJoinChat    = "JounChat"
-	actionTypeDeleteChat  = "DeleteChat "
+	actionTypeDeleteChat  = "DELETE_CHAT"
 )
 
 type service struct {

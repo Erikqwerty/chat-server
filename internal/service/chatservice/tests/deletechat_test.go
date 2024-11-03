@@ -17,7 +17,7 @@ import (
 	dbMock "github.com/erikqwerty/chat-server/pkg/db/mocks"
 )
 
-func TestCreateChat(t *testing.T) {
+func TestDeleteChat(t *testing.T) {
 	t.Parallel()
 
 	type chatServerRepoMockFunc func(mc *minimock.Controller) repository.ChatServerRepository
@@ -25,51 +25,40 @@ func TestCreateChat(t *testing.T) {
 
 	type args struct {
 		ctx context.Context
-		req *model.CreateChat
+		id  int64
 	}
 
 	var (
-		ctx = context.Background()
-		mc  = minimock.NewController(t)
+		ctx        = context.Background()
+		mc         = minimock.NewController(t)
+		chatID     = gofakeit.Int64()
+		actionType = "DELETE_CHAT"
+		logDetails = "детальная информация отсутствует"
 
-		chatID       = gofakeit.Int64()
-		chatName     = gofakeit.Name()
-		membersEmail = []string{gofakeit.Email()}
-
-		req = &model.CreateChat{
-			ChatName:     chatName,
-			MembersEmail: membersEmail,
-		}
-
-		repoErr = errors.New("репо ошибка")
+		repoErr = errors.New("repository error")
+		txErr   = errors.New("transaction error")
 	)
 
 	tests := []struct {
 		name                   string
 		args                   args
-		want                   int64
 		err                    error
 		chatServerRepoMockFunc chatServerRepoMockFunc
 		txManagerMockFunc      txManagerMockFunc
 	}{
 		{
-			name: "service: успешное создание чата",
+			name: "service: успешное удаление чата",
 			args: args{
 				ctx: ctx,
-				req: req,
+				id:  chatID,
 			},
-			want: chatID,
-			err:  nil,
+			err: nil,
 			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
-				mock.CreateChatMock.Expect(ctx, req.ChatName).Return(int(chatID), nil)
-				mock.CreateChatMemberMock.Expect(ctx, &model.ChatMember{
-					ChatID:    int(chatID),
-					UserEmail: membersEmail[0],
-				}).Return(nil)
+				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(nil)
 				mock.CreateLogMock.Expect(ctx, &model.Log{
-					ActionType:    "CREATE_CHAT",
-					ActionDetails: "детальная информация отсутствует",
+					ActionType:    actionType,
+					ActionDetails: logDetails,
 				}).Return(nil)
 				return mock
 			},
@@ -82,40 +71,38 @@ func TestCreateChat(t *testing.T) {
 			},
 		},
 		{
-			name: "service: ошибка транзакции при создание чата",
+			name: "service: ошибка при удалении чата",
 			args: args{
 				ctx: ctx,
-				req: req,
+				id:  chatID,
 			},
-			want: 0,
-			err:  errors.New("transaction failed"),
+			err: repoErr,
 			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
+				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(repoErr)
 				return mock
 			},
 			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
-					return errors.New("transaction failed")
+					return handler(ctx)
 				})
 				return mock
 			},
 		},
 		{
-			name: "service: ошибка добавления участников чата",
+			name: "service: ошибка при создании лога",
 			args: args{
 				ctx: ctx,
-				req: req,
+				id:  chatID,
 			},
-			want: 0,
-			err:  repoErr,
+			err: repoErr,
 			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
-				mock.CreateChatMock.Expect(ctx, req.ChatName).Return(int(chatID), nil)
-
-				mock.CreateChatMemberMock.Expect(ctx, &model.ChatMember{
-					ChatID:    int(chatID),
-					UserEmail: membersEmail[0],
+				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(nil)
+				mock.CreateLogMock.Expect(ctx, &model.Log{
+					ActionType:    actionType,
+					ActionDetails: logDetails,
 				}).Return(repoErr)
 				return mock
 			},
@@ -123,6 +110,25 @@ func TestCreateChat(t *testing.T) {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
+				})
+				return mock
+			},
+		},
+		{
+			name: "service: ошибка транзакции",
+			args: args{
+				ctx: ctx,
+				id:  chatID,
+			},
+			err: txErr,
+			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+				mock := repoMock.NewChatServerRepositoryMock(t)
+				return mock
+			},
+			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+				mock := dbMock.NewTxManagerMock(t)
+				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
+					return txErr
 				})
 				return mock
 			},
@@ -137,12 +143,11 @@ func TestCreateChat(t *testing.T) {
 			chatRepoMock := tt.chatServerRepoMockFunc(mc)
 			txManagerMock := tt.txManagerMockFunc(mc)
 
-			servic := chatservice.NewService(chatRepoMock, txManagerMock)
+			service := chatservice.NewService(chatRepoMock, txManagerMock)
 
-			ID, err := servic.CreateChat(tt.args.ctx, tt.args.req)
+			err := service.DeleteChat(tt.args.ctx, tt.args.id)
 
 			require.Equal(t, tt.err, err)
-			require.Equal(t, tt.want, ID)
 		})
 	}
 
