@@ -6,7 +6,6 @@ import (
 
 	"google.golang.org/grpc/peer"
 
-	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
 	dev "github.com/erikqwerty/chat-server/internal/service"
 	"github.com/erikqwerty/chat-server/pkg/db"
@@ -17,7 +16,7 @@ var _ dev.ChatService = (*service)(nil)
 const (
 	actionTypeCreateChat  = "CreateChat"
 	actionTypeSendMessage = "SendMessage "
-	actionTypeJounChat    = "JounChat"
+	actionTypeJoinChat    = "JounChat"
 	actionTypeDeleteChat  = "DeleteChat "
 )
 
@@ -32,22 +31,6 @@ func NewService(chatRepository repository.ChatServerRepository, txManager db.TxM
 		chatRepository: chatRepository,
 		txManager:      txManager,
 	}
-}
-
-// writeLog - записывает лог в базу даных
-func (s *service) writeLog(ctx context.Context, actionType string) error {
-	err := s.chatRepository.CreateLog(ctx,
-		&model.Log{
-			ActionType:      actionType,
-			ActionDetails:   details(ctx),
-			ActionTimestamp: timeNowUTC3(),
-		})
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // details - информация о пользователе

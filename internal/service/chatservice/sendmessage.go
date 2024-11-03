@@ -12,13 +12,20 @@ func (s *service) SendMessage(ctx context.Context, msg *model.Message) error {
 	}
 
 	err := s.txManager.ReadCommitted(ctx, func(ctx context.Context) error {
-		_, err := s.chatRepository.CreateMessage(ctx, msg)
-		if err != nil {
-			return err
+		var errTX error
+
+		_, errTX = s.chatRepository.CreateMessage(ctx, msg)
+		if errTX != nil {
+			return errTX
 		}
 
-		if err := s.writeLog(ctx, actionTypeSendMessage); err != nil {
-			return err
+		errTX = s.chatRepository.CreateLog(ctx, &model.Log{
+			ActionType:      actionTypeSendMessage,
+			ActionDetails:   details(ctx),
+			ActionTimestamp: timeNowUTC3(),
+		})
+		if errTX != nil {
+			return errTX
 		}
 
 		return nil
