@@ -5,9 +5,9 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 
-	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
+	"github.com/erikqwerty/chat-server/pkg/db"
 )
 
 var _ repository.RepoLoger = (*repoLoger)(nil)

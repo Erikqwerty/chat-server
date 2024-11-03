@@ -5,15 +5,15 @@ import (
 	"log"
 
 	"github.com/erikqwerty/chat-server/internal/api"
-	"github.com/erikqwerty/chat-server/internal/client/db"
-	"github.com/erikqwerty/chat-server/internal/client/db/pg"
-	"github.com/erikqwerty/chat-server/internal/client/db/transaction"
-	"github.com/erikqwerty/chat-server/internal/closer"
 	"github.com/erikqwerty/chat-server/internal/config"
 	"github.com/erikqwerty/chat-server/internal/repository"
 	"github.com/erikqwerty/chat-server/internal/repository/chatrepo"
 	"github.com/erikqwerty/chat-server/internal/service"
 	"github.com/erikqwerty/chat-server/internal/service/chatservice"
+	"github.com/erikqwerty/chat-server/pkg/closer"
+	"github.com/erikqwerty/chat-server/pkg/db"
+	"github.com/erikqwerty/chat-server/pkg/db/pg"
+	"github.com/erikqwerty/chat-server/pkg/db/transaction"
 )
 
 type serviceProvider struct {

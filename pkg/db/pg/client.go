@@ -5,7 +5,7 @@ import (
 
 	"github.com/jackc/pgx/v4/pgxpool"
 
-	"github.com/erikqwerty/chat-server/internal/client/db"
+	"github.com/erikqwerty/chat-server/pkg/db"
 )
 
 // pgClient представляет клиента базы данных, который использует masterDBS для работы с базой данных.

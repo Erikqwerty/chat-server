@@ -6,8 +6,8 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/pkg/errors"
 
-	"github.com/erikqwerty/chat-server/internal/client/db"
-	"github.com/erikqwerty/chat-server/internal/client/db/pg"
+	"github.com/erikqwerty/chat-server/pkg/db"
+	"github.com/erikqwerty/chat-server/pkg/db/pg"
 )
 
 type manager struct {

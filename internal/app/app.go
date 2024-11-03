@@ -9,9 +9,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/erikqwerty/chat-server/internal/closer"
 	"github.com/erikqwerty/chat-server/internal/config"
 	desc "github.com/erikqwerty/chat-server/pkg/chatapi_v1"
+	"github.com/erikqwerty/chat-server/pkg/closer"
 )
 
 // App - структура приложения

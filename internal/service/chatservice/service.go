@@ -6,10 +6,10 @@ import (
 
 	"google.golang.org/grpc/peer"
 
-	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
 	dev "github.com/erikqwerty/chat-server/internal/service"
+	"github.com/erikqwerty/chat-server/pkg/db"
 )
 
 var _ dev.ChatService = (*service)(nil)
@@ -34,7 +34,7 @@ func NewService(chatRepository repository.ChatServerRepository, txManager db.TxM
 	}
 }
 
-// createLog - записывает лог в базу даных
+// writeLog - записывает лог в базу даных
 func (s *service) writeLog(ctx context.Context, actionType string) error {
 	err := s.chatRepository.CreateLog(ctx,
 		&model.Log{
