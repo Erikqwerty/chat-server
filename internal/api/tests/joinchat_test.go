@@ -41,9 +41,10 @@ func TestJoinChat(t *testing.T) {
 		member2 = gofakeit.Email()
 		Members = []string{member1, member2, userEmail}
 
-		text       = gofakeit.Name()
-		timen      = time.Now()
-		messageApi = &desc.Message{
+		text  = gofakeit.Name()
+		timen = time.Now()
+
+		messageAPI = &desc.Message{
 			FromUserEmail: member1,
 			Text:          text,
 			Timestamp:     timestamppb.New(timen),
@@ -66,7 +67,7 @@ func TestJoinChat(t *testing.T) {
 			ChatId:       chatID,
 			ChatName:     ChatName,
 			Participants: Members,
-			Messages:     []*desc.Message{messageApi},
+			Messages:     []*desc.Message{messageAPI},
 		}
 
 		joinMemberServiceReq = &model.ChatMember{

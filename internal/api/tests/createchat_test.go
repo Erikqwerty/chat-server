@@ -93,6 +93,7 @@ func TestCreateChat(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+
 			chatServiceMock := tt.chatSericeMockFunc(mc)
 			api := api.NewChatServerGRPCImplementation(chatServiceMock)
 

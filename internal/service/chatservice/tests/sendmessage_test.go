@@ -51,10 +51,10 @@ func TestSendMessage(t *testing.T) {
 			name: "service: ошибка: сообщение nil",
 			msg:  nil,
 			err:  chatservice.ErrSendMessage(),
-			chatRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				return repoMock.NewChatServerRepositoryMock(t)
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				return dbMock.NewTxManagerMock(t)
 			},
 		},
@@ -62,7 +62,7 @@ func TestSendMessage(t *testing.T) {
 			name: "service: успешная отправка сообщения",
 			msg:  message,
 			err:  nil,
-			chatRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				mock.CreateMessageMock.Expect(ctx, message).Return(message.ID, nil)
 				mock.CreateLogMock.Expect(ctx, &model.Log{
@@ -71,7 +71,7 @@ func TestSendMessage(t *testing.T) {
 				}).Return(nil)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
@@ -83,12 +83,12 @@ func TestSendMessage(t *testing.T) {
 			name: "service: ошибка при создании сообщения",
 			msg:  message,
 			err:  repoErr,
-			chatRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				mock.CreateMessageMock.Expect(ctx, message).Return(0, repoErr)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
@@ -100,7 +100,7 @@ func TestSendMessage(t *testing.T) {
 			name: "service: ошибка при создании лога",
 			msg:  message,
 			err:  repoErr,
-			chatRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				mock.CreateMessageMock.Expect(ctx, message).Return(message.ID, nil)
 				mock.CreateLogMock.Expect(ctx, &model.Log{
@@ -109,7 +109,7 @@ func TestSendMessage(t *testing.T) {
 				}).Return(repoErr)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
@@ -121,13 +121,13 @@ func TestSendMessage(t *testing.T) {
 			name: "service: ошибка транзакции",
 			msg:  message,
 			err:  txErr,
-			chatRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
-				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
+				mock.ReadCommittedMock.Set(func(_ context.Context, _ db.Handler) error {
 					return txErr
 				})
 				return mock

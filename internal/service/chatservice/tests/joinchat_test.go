@@ -94,7 +94,7 @@ func TestJoinChat(t *testing.T) {
 				Messages: messages,
 			},
 			err: nil,
-			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				mock.CreateChatMemberMock.Expect(ctx, &model.ChatMember{ChatID: chatID, UserEmail: userEmail}).Return(nil)
 				mock.ReadChatMock.Expect(ctx, chatID).Return(chat, nil)
@@ -106,7 +106,7 @@ func TestJoinChat(t *testing.T) {
 				}).Return(nil)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
@@ -122,10 +122,10 @@ func TestJoinChat(t *testing.T) {
 			},
 			want: nil,
 			err:  chatservice.ErrJoinChatReq(),
-			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				return repoMock.NewChatServerRepositoryMock(t)
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				return dbMock.NewTxManagerMock(t)
 			},
 		},
@@ -140,12 +140,12 @@ func TestJoinChat(t *testing.T) {
 			},
 			want: nil,
 			err:  repoErr,
-			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				mock.CreateChatMemberMock.Expect(ctx, &model.ChatMember{ChatID: chatID, UserEmail: userEmail}).Return(repoErr)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
@@ -164,13 +164,13 @@ func TestJoinChat(t *testing.T) {
 			},
 			want: nil,
 			err:  txErr,
-			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
-				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
+				mock.ReadCommittedMock.Set(func(_ context.Context, _ db.Handler) error {
 					return txErr
 				})
 				return mock

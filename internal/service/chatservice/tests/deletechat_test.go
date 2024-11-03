@@ -53,7 +53,7 @@ func TestDeleteChat(t *testing.T) {
 				id:  chatID,
 			},
 			err: nil,
-			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(nil)
 				mock.CreateLogMock.Expect(ctx, &model.Log{
@@ -62,7 +62,7 @@ func TestDeleteChat(t *testing.T) {
 				}).Return(nil)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
@@ -77,12 +77,12 @@ func TestDeleteChat(t *testing.T) {
 				id:  chatID,
 			},
 			err: repoErr,
-			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(repoErr)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
@@ -97,7 +97,7 @@ func TestDeleteChat(t *testing.T) {
 				id:  chatID,
 			},
 			err: repoErr,
-			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(nil)
 				mock.CreateLogMock.Expect(ctx, &model.Log{
@@ -106,7 +106,7 @@ func TestDeleteChat(t *testing.T) {
 				}).Return(repoErr)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
@@ -121,13 +121,13 @@ func TestDeleteChat(t *testing.T) {
 				id:  chatID,
 			},
 			err: txErr,
-			chatServerRepoMockFunc: func(mc *minimock.Controller) repository.ChatServerRepository {
+			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
 				return mock
 			},
-			txManagerMockFunc: func(mc *minimock.Controller) db.TxManager {
+			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
-				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
+				mock.ReadCommittedMock.Set(func(_ context.Context, _ db.Handler) error {
 					return txErr
 				})
 				return mock

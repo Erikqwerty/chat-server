@@ -21,17 +21,18 @@ const (
 
 // Ошибки для валидации
 var (
-	errUserEmailJoinChat      = errors.New("не передан email пользователя который хочет присоеденится к чату")
-	errFromUserEmail          = errors.New("не передан email отправителя сообщения")
-	errChatNameNotSpecified   = errors.New("не указанно название чата")
-	errChatMembersNotSpecifed = errors.New("не переданы участники чата")
-	errChatIDNotSpecifed      = errors.New("не указан id чата для удаления")
-	errMessageTextNotSpecifed = errors.New("нельзя отправлять пустое сообщение")
+	ErrUserEmailJoinChat      = errors.New("не передан email пользователя который хочет присоеденится к чату")
+	ErrFromUserEmail          = errors.New("не передан email отправителя сообщения")
+	ErrChatNameNotSpecified   = errors.New("не указанно название чата")
+	ErrChatMembersNotSpecifed = errors.New("не переданы участники чата")
+	ErrChatIDNotSpecifed      = errors.New("не указан id чата для удаления")
+	ErrMessageTextNotSpecifed = errors.New("нельзя отправлять пустое сообщение")
 
-	errInvalidEmail = errors.New("email не валиден")
+	ErrInvalidEmail = errors.New("email не валиден")
 )
 
-func validateRequest(req interface{}) error {
+// ValidateRequest - используйтся для первичной валидации данных полученных в api слое
+func ValidateRequest(req interface{}) error {
 	v := reflect.ValueOf(req)
 
 	// Проверка на указатель и получение значения
@@ -50,17 +51,17 @@ func validateRequest(req interface{}) error {
 		switch fieldName {
 		case fromUserEmail:
 			if field.String() == "" {
-				return errFromUserEmail
+				return ErrFromUserEmail
 			}
 			if !validator.IsValidEmail(field.String()) {
-				return errInvalidEmail
+				return ErrInvalidEmail
 			}
 		case userEmail:
 			if field.String() == "" {
-				return errUserEmailJoinChat
+				return ErrUserEmailJoinChat
 			}
 			if !validator.IsValidEmail(field.String()) {
-				return errInvalidEmail
+				return ErrInvalidEmail
 			}
 		case emails:
 			if field.Kind() != reflect.Slice || field.Type().Elem().Kind() != reflect.String {
@@ -70,7 +71,7 @@ func validateRequest(req interface{}) error {
 			emails := field.Interface().([]string)
 
 			if len(emails) == 0 {
-				return errChatMembersNotSpecifed
+				return ErrChatMembersNotSpecifed
 			}
 
 			if err := validator.ValidEmails(emails); err != nil {
@@ -78,15 +79,15 @@ func validateRequest(req interface{}) error {
 			}
 		case chatName:
 			if field.String() == "" {
-				return errChatNameNotSpecified
+				return ErrChatNameNotSpecified
 			}
 		case chatID:
 			if field.Int() == 0 {
-				return errChatIDNotSpecifed
+				return ErrChatIDNotSpecifed
 			}
 		case messageText:
 			if field.String() == "" {
-				return errMessageTextNotSpecifed
+				return ErrMessageTextNotSpecifed
 			}
 		}
 	}
