@@ -16,9 +16,8 @@ func (s *service) DeleteChat(ctx context.Context, id int64) error {
 		}
 
 		errTX = s.chatRepository.CreateLog(ctx, &model.Log{
-			ActionType:      actionTypeDeleteChat,
-			ActionDetails:   details(ctx),
-			ActionTimestamp: timeNowUTC3(),
+			ActionType:    actionTypeDeleteChat,
+			ActionDetails: details(ctx),
 		})
 		if errTX != nil {
 			return errTX

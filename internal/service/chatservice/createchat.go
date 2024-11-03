@@ -35,9 +35,8 @@ func (s *service) CreateChat(ctx context.Context, chat *model.CreateChat) (int64
 		}
 
 		errTX = s.chatRepository.CreateLog(ctx, &model.Log{
-			ActionType:      actionTypeCreateChat,
-			ActionDetails:   details(ctx),
-			ActionTimestamp: timeNowUTC3(),
+			ActionType:    actionTypeCreateChat,
+			ActionDetails: details(ctx),
 		})
 		if errTX != nil {
 			return errTX

@@ -20,9 +20,8 @@ func (s *service) SendMessage(ctx context.Context, msg *model.Message) error {
 		}
 
 		errTX = s.chatRepository.CreateLog(ctx, &model.Log{
-			ActionType:      actionTypeSendMessage,
-			ActionDetails:   details(ctx),
-			ActionTimestamp: timeNowUTC3(),
+			ActionType:    actionTypeSendMessage,
+			ActionDetails: details(ctx),
 		})
 		if errTX != nil {
 			return errTX

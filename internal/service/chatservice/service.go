@@ -2,7 +2,6 @@ package chatservice
 
 import (
 	"context"
-	"time"
 
 	"google.golang.org/grpc/peer"
 
@@ -14,7 +13,7 @@ import (
 var _ dev.ChatService = (*service)(nil)
 
 const (
-	actionTypeCreateChat  = "CreateChat"
+	actionTypeCreateChat  = "CREATE_CHAT"
 	actionTypeSendMessage = "SendMessage "
 	actionTypeJoinChat    = "JounChat"
 	actionTypeDeleteChat  = "DeleteChat "
@@ -38,12 +37,11 @@ func details(ctx context.Context) string {
 	info := "Адрес:"
 
 	peer, _ := peer.FromContext(ctx)
-	info += peer.Addr.String()
+	if peer != nil {
+		info += peer.Addr.String()
+	} else {
+		info = "детальная информация отсутствует"
+	}
 
 	return info
-}
-
-// timeNowUTC3 + возвращает время +3
-func timeNowUTC3() time.Time {
-	return time.Now().In(time.FixedZone("UTC+3", 3*60*60))
 }
