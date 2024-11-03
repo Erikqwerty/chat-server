@@ -15,7 +15,7 @@ var _ dev.ChatService = (*service)(nil)
 const (
 	actionTypeCreateChat  = "CREATE_CHAT"
 	actionTypeSendMessage = "SendMessage "
-	actionTypeJoinChat    = "JounChat"
+	actionTypeJoinChat    = "JOIN_CHAT"
 	actionTypeDeleteChat  = "DELETE_CHAT"
 )
 
