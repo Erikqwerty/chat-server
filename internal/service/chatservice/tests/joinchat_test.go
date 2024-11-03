@@ -80,7 +80,7 @@ func TestJoinChat(t *testing.T) {
 		txManagerMockFunc      txManagerMockFunc
 	}{
 		{
-			name: "успешное добавление участника в чат",
+			name: "service: успешное добавление участника в чат",
 			args: args{
 				ctx: ctx,
 				chatMember: &model.ChatMember{
@@ -115,7 +115,7 @@ func TestJoinChat(t *testing.T) {
 			},
 		},
 		{
-			name: "ошибка при передаче nil для chatMember",
+			name: "service: ошибка при передаче nil для chatMember",
 			args: args{
 				ctx:        ctx,
 				chatMember: nil,
@@ -130,7 +130,7 @@ func TestJoinChat(t *testing.T) {
 			},
 		},
 		{
-			name: "ошибка при создании участника чата",
+			name: "service: ошибка при создании участника чата",
 			args: args{
 				ctx: ctx,
 				chatMember: &model.ChatMember{
