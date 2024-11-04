@@ -96,21 +96,30 @@ func TestJoinChat(t *testing.T) {
 			err: nil,
 			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
-				mock.CreateChatMemberMock.Expect(ctx, &model.ChatMember{ChatID: chatID, UserEmail: userEmail}).Return(nil)
+
+				mock.CreateChatMemberMock.Expect(ctx,
+					&model.ChatMember{
+						ChatID:    chatID,
+						UserEmail: userEmail}).
+					Return(nil)
 				mock.ReadChatMock.Expect(ctx, chatID).Return(chat, nil)
 				mock.ReadChatMembersMock.Expect(ctx, chatID).Return(members, nil)
 				mock.ReadMessagesMock.Expect(ctx, chatID).Return(messages, nil)
-				mock.CreateLogMock.Expect(ctx, &model.Log{
-					ActionType:    actionType,
-					ActionDetails: logDetails,
-				}).Return(nil)
+				mock.CreateLogMock.Expect(ctx,
+					&model.Log{
+						ActionType:    actionType,
+						ActionDetails: logDetails,
+					}).Return(nil)
+
 				return mock
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
 				})
+
 				return mock
 			},
 		},
@@ -142,14 +151,18 @@ func TestJoinChat(t *testing.T) {
 			err:  repoErr,
 			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
+
 				mock.CreateChatMemberMock.Expect(ctx, &model.ChatMember{ChatID: chatID, UserEmail: userEmail}).Return(repoErr)
+
 				return mock
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
 				})
+
 				return mock
 			},
 		},
@@ -170,9 +183,11 @@ func TestJoinChat(t *testing.T) {
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(_ context.Context, _ db.Handler) error {
 					return txErr
 				})
+
 				return mock
 			},
 		},

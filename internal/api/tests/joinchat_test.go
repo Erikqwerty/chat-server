@@ -105,7 +105,9 @@ func TestJoinChat(t *testing.T) {
 			err:  nil,
 			chatServiceMockFunc: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMock.NewChatServiceMock(mc)
+
 				mock.JoinChatMock.Expect(ctx, joinMemberServiceReq).Return(joinMemberServiceRes, nil)
+
 				return mock
 			},
 		},
@@ -119,7 +121,9 @@ func TestJoinChat(t *testing.T) {
 			err:  tempErr,
 			chatServiceMockFunc: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMock.NewChatServiceMock(mc)
+
 				mock.JoinChatMock.Expect(ctx, joinMemberServiceReq).Return(nil, tempErr)
+
 				return mock
 			},
 		},
@@ -129,6 +133,7 @@ func TestJoinChat(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+
 			chatServiceMock := tt.chatServiceMockFunc(mc)
 			api := api.NewChatServerGRPCImplementation(chatServiceMock)
 

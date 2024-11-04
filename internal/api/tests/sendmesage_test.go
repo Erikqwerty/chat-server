@@ -69,7 +69,9 @@ func TestSendMessage(t *testing.T) {
 			err: nil,
 			chatServiceMockFunc: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMock.NewChatServiceMock(mc)
+
 				mock.SendMessageMock.Expect(ctx, message).Return(nil)
+
 				return mock
 			},
 		},
@@ -82,7 +84,9 @@ func TestSendMessage(t *testing.T) {
 			err: tempErr,
 			chatServiceMockFunc: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMock.NewChatServiceMock(mc)
+
 				mock.SendMessageMock.Expect(ctx, message).Return(tempErr)
+
 				return mock
 			},
 		},
@@ -92,6 +96,7 @@ func TestSendMessage(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+
 			chatServiceMock := tt.chatServiceMockFunc(mc)
 			api := api.NewChatServerGRPCImplementation(chatServiceMock)
 

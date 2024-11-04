@@ -62,6 +62,7 @@ func TestCreateChat(t *testing.T) {
 			err:  nil,
 			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
+
 				mock.CreateChatMock.Expect(ctx, req.ChatName).Return(int(chatID), nil)
 				mock.CreateChatMemberMock.Expect(ctx, &model.ChatMember{
 					ChatID:    int(chatID),
@@ -71,13 +72,16 @@ func TestCreateChat(t *testing.T) {
 					ActionType:    "CREATE_CHAT",
 					ActionDetails: "детальная информация отсутствует",
 				}).Return(nil)
+
 				return mock
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
 				})
+
 				return mock
 			},
 		},
@@ -95,9 +99,11 @@ func TestCreateChat(t *testing.T) {
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(_ context.Context, _ db.Handler) error {
 					return errors.New("transaction failed")
 				})
+
 				return mock
 			},
 		},
@@ -111,19 +117,22 @@ func TestCreateChat(t *testing.T) {
 			err:  repoErr,
 			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
-				mock.CreateChatMock.Expect(ctx, req.ChatName).Return(int(chatID), nil)
 
+				mock.CreateChatMock.Expect(ctx, req.ChatName).Return(int(chatID), nil)
 				mock.CreateChatMemberMock.Expect(ctx, &model.ChatMember{
 					ChatID:    int(chatID),
 					UserEmail: membersEmail[0],
 				}).Return(repoErr)
+
 				return mock
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
 				})
+
 				return mock
 			},
 		},

@@ -55,18 +55,22 @@ func TestDeleteChat(t *testing.T) {
 			err: nil,
 			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
+
 				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(nil)
 				mock.CreateLogMock.Expect(ctx, &model.Log{
 					ActionType:    actionType,
 					ActionDetails: logDetails,
 				}).Return(nil)
+
 				return mock
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
 				})
+
 				return mock
 			},
 		},
@@ -79,14 +83,18 @@ func TestDeleteChat(t *testing.T) {
 			err: repoErr,
 			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
+
 				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(repoErr)
+
 				return mock
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
 				})
+
 				return mock
 			},
 		},
@@ -99,18 +107,22 @@ func TestDeleteChat(t *testing.T) {
 			err: repoErr,
 			chatServerRepoMockFunc: func(_ *minimock.Controller) repository.ChatServerRepository {
 				mock := repoMock.NewChatServerRepositoryMock(t)
+
 				mock.DeleteChatMock.Expect(ctx, int(chatID)).Return(nil)
 				mock.CreateLogMock.Expect(ctx, &model.Log{
 					ActionType:    actionType,
 					ActionDetails: logDetails,
 				}).Return(repoErr)
+
 				return mock
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(ctx context.Context, handler db.Handler) error {
 					return handler(ctx)
 				})
+
 				return mock
 			},
 		},
@@ -127,9 +139,11 @@ func TestDeleteChat(t *testing.T) {
 			},
 			txManagerMockFunc: func(_ *minimock.Controller) db.TxManager {
 				mock := dbMock.NewTxManagerMock(t)
+
 				mock.ReadCommittedMock.Set(func(_ context.Context, _ db.Handler) error {
 					return txErr
 				})
+
 				return mock
 			},
 		},

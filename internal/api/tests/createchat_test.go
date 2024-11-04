@@ -69,7 +69,9 @@ func TestCreateChat(t *testing.T) {
 			err:  nil,
 			chatSericeMockFunc: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMock.NewChatServiceMock(mc)
+
 				mock.CreateChatMock.Expect(ctx, createChat).Return(id, nil)
+
 				return mock
 			},
 		},
@@ -83,7 +85,9 @@ func TestCreateChat(t *testing.T) {
 			err:  tempErr,
 			chatSericeMockFunc: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMock.NewChatServiceMock(mc)
+
 				mock.CreateChatMock.Expect(ctx, createChat).Return(0, tempErr)
+
 				return mock
 			},
 		},

@@ -53,7 +53,9 @@ func TestDeleteChat(t *testing.T) {
 			err: nil,
 			chatSericeMockFunc: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMock.NewChatServiceMock(mc)
+
 				mock.DeleteChatMock.Expect(ctx, req.ChatId).Return(nil)
+
 				return mock
 			},
 		},
@@ -66,7 +68,9 @@ func TestDeleteChat(t *testing.T) {
 			err: tempErr,
 			chatSericeMockFunc: func(mc *minimock.Controller) service.ChatService {
 				mock := serviceMock.NewChatServiceMock(mc)
+
 				mock.DeleteChatMock.Expect(ctx, req.ChatId).Return(tempErr)
+
 				return mock
 			},
 		},
@@ -76,6 +80,7 @@ func TestDeleteChat(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
+
 			chatServiceMock := tt.chatSericeMockFunc(mc)
 			api := api.NewChatServerGRPCImplementation(chatServiceMock)
 
