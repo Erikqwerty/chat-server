@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/erikqwerty/erik-platform/clients/db"
+	dbMock "github.com/erikqwerty/erik-platform/clients/db/mocks"
 	"github.com/gojuno/minimock"
 	"github.com/stretchr/testify/require"
 
@@ -13,8 +15,6 @@ import (
 	"github.com/erikqwerty/chat-server/internal/repository"
 	repoMock "github.com/erikqwerty/chat-server/internal/repository/mocks"
 	"github.com/erikqwerty/chat-server/internal/service/chatservice"
-	"github.com/erikqwerty/chat-server/pkg/db"
-	dbMock "github.com/erikqwerty/chat-server/pkg/db/mocks"
 )
 
 func TestDeleteChat(t *testing.T) {

@@ -3,11 +3,11 @@ package chatservice
 import (
 	"context"
 
+	"github.com/erikqwerty/erik-platform/clients/db"
 	"google.golang.org/grpc/peer"
 
 	"github.com/erikqwerty/chat-server/internal/repository"
 	dev "github.com/erikqwerty/chat-server/internal/service"
-	"github.com/erikqwerty/chat-server/pkg/db"
 )
 
 var _ dev.ChatService = (*service)(nil)

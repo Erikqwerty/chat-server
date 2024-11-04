@@ -1,8 +1,9 @@
 package chatrepo
 
 import (
+	"github.com/erikqwerty/erik-platform/clients/db"
+
 	"github.com/erikqwerty/chat-server/internal/repository"
-	"github.com/erikqwerty/chat-server/pkg/db"
 )
 
 var _ repository.ChatServerRepository = (*repo)(nil)
