@@ -18,33 +18,38 @@ func (s *service) JoinChat(ctx context.Context, chatMember *model.ChatMember) (*
 	)
 
 	err := s.txManager.ReadCommitted(ctx, func(ctx context.Context) error {
-		err := s.chatRepository.CreateChatMember(ctx, chatMember)
-		if err != nil {
-			return err
+		var errTX error
+
+		errTX = s.chatRepository.CreateChatMember(ctx, chatMember)
+		if errTX != nil {
+			return errTX
 		}
 
-		chat, err = s.chatRepository.ReadChat(ctx, chatMember.ChatID)
-		if err != nil {
-			return err
+		chat, errTX = s.chatRepository.ReadChat(ctx, chatMember.ChatID)
+		if errTX != nil {
+			return errTX
 		}
 
-		members, err = s.chatRepository.ReadChatMembers(ctx, chatMember.ChatID)
-		if err != nil {
-			return err
+		members, errTX = s.chatRepository.ReadChatMembers(ctx, chatMember.ChatID)
+		if errTX != nil {
+			return errTX
 		}
 
-		messages, err = s.chatRepository.ReadMessages(ctx, chatMember.ChatID)
-		if err != nil {
-			return err
+		messages, errTX = s.chatRepository.ReadMessages(ctx, chatMember.ChatID)
+		if errTX != nil {
+			return errTX
 		}
 
-		if err := s.writeLog(ctx, actionTypeJounChat); err != nil {
-			return err
+		errTX = s.chatRepository.CreateLog(ctx, &model.Log{
+			ActionType:    actionTypeJoinChat,
+			ActionDetails: details(ctx),
+		})
+		if errTX != nil {
+			return errTX
 		}
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}

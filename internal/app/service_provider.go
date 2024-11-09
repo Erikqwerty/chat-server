@@ -4,11 +4,12 @@ import (
 	"context"
 	"log"
 
+	"github.com/erikqwerty/erik-platform/clients/db"
+	"github.com/erikqwerty/erik-platform/clients/db/pg"
+	"github.com/erikqwerty/erik-platform/clients/db/transaction"
+	"github.com/erikqwerty/erik-platform/closer"
+
 	"github.com/erikqwerty/chat-server/internal/api"
-	"github.com/erikqwerty/chat-server/internal/client/db"
-	"github.com/erikqwerty/chat-server/internal/client/db/pg"
-	"github.com/erikqwerty/chat-server/internal/client/db/transaction"
-	"github.com/erikqwerty/chat-server/internal/closer"
 	"github.com/erikqwerty/chat-server/internal/config"
 	"github.com/erikqwerty/chat-server/internal/repository"
 	"github.com/erikqwerty/chat-server/internal/repository/chatrepo"

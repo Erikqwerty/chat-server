@@ -10,7 +10,7 @@ import (
 
 // DeleteChat - обрабатывает запрос на удаление чата
 func (i *ImplChatServer) DeleteChat(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
-	if err := validateRequest(req); err != nil {
+	if err := ValidateRequest(req); err != nil {
 		return nil, err
 	}
 

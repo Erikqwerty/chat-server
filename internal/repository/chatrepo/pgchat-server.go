@@ -1,7 +1,8 @@
 package chatrepo
 
 import (
-	"github.com/erikqwerty/chat-server/internal/client/db"
+	"github.com/erikqwerty/erik-platform/clients/db"
+
 	"github.com/erikqwerty/chat-server/internal/repository"
 )
 

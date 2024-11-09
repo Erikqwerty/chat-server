@@ -9,7 +9,7 @@ import (
 
 // JoinChat - Обрабатывает запрос на подключение к чату
 func (i *ImplChatServer) JoinChat(ctx context.Context, req *desc.JoinChatRequest) (*desc.JoinChatResponse, error) {
-	if err := validateRequest(req); err != nil {
+	if err := ValidateRequest(req); err != nil {
 		return nil, err
 	}
 

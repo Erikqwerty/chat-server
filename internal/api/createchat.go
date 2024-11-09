@@ -9,7 +9,7 @@ import (
 
 // CreateChat - обрабатывает запрос на создание чата
 func (i *ImplChatServer) CreateChat(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	if err := validateRequest(req); err != nil {
+	if err := ValidateRequest(req); err != nil {
 		return nil, err
 	}
 

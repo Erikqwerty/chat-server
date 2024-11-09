@@ -4,8 +4,8 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/erikqwerty/erik-platform/clients/db"
 
-	"github.com/erikqwerty/chat-server/internal/client/db"
 	"github.com/erikqwerty/chat-server/internal/model"
 	"github.com/erikqwerty/chat-server/internal/repository"
 	"github.com/erikqwerty/chat-server/internal/repository/chatrepo/convertor"

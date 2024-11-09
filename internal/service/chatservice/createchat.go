@@ -34,8 +34,12 @@ func (s *service) CreateChat(ctx context.Context, chat *model.CreateChat) (int64
 			}
 		}
 
-		if err := s.writeLog(ctx, actionTypeCreateChat); err != nil {
-			return err
+		errTX = s.chatRepository.CreateLog(ctx, &model.Log{
+			ActionType:    actionTypeCreateChat,
+			ActionDetails: details(ctx),
+		})
+		if errTX != nil {
+			return errTX
 		}
 
 		return nil

@@ -11,7 +11,7 @@ import (
 
 // SendMessage - обрабатывает запрос на отправку сообщения
 func (i *ImplChatServer) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
-	if err := validateRequest(req); err != nil {
+	if err := ValidateRequest(req); err != nil {
 		return nil, err
 	}
 

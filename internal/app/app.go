@@ -5,11 +5,11 @@ import (
 	"log"
 	"net"
 
+	"github.com/erikqwerty/erik-platform/closer"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/erikqwerty/chat-server/internal/closer"
 	"github.com/erikqwerty/chat-server/internal/config"
 	desc "github.com/erikqwerty/chat-server/pkg/chatapi_v1"
 )
